@@ -1,6 +1,12 @@
 # frozen_string_literal: true
 
 require 'colorize'
+require_relative './pawns'
+require_relative './king'
+require_relative './queen'
+require_relative './knight'
+require_relative './bishop'
+require_relative './rook'
 
 # responsible for creating and maintaining board
 class Board
@@ -17,6 +23,16 @@ class Board
         game_board[i][j] = ((i + j) % 2).zero? ? white : black
       end
     end
+    put_board
+  end
+
+  # def populate_board
+
+  # end
+
+  private
+
+  def put_board
     puts "\t a b c d e f g h"
     puts "\t ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁ "
     game_board.each do |col|
@@ -26,8 +42,6 @@ class Board
     puts "\t a b c d e f g h"
     puts "\n\n"
   end
-
-  private
 
   def setup
     @game_board = Array.new(8) { Array.new(8, '  ') }
