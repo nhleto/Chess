@@ -1,14 +1,16 @@
 # frozen_string_literal: true
 
+require 'colorize'
+
 # pawn clas
 class Pawn
-  attr_reader :color
-  def initialize
+  attr_reader :color, :symbol
+  def initialize(color)
     @color = color
-    @symbol = symbol
+    @symbol = piece
   end
 
   def piece
-    @color == 'white' ? '♙' : '♟'
+    @color == :white ? " \u2659 " : " \u265F ".white
   end
 end
