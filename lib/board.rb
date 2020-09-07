@@ -26,20 +26,22 @@ class Board
     put_board
   end
 
-  # def populate_board
-
-  # end
+  def populate_board
+    game_board[1][1] = Pawn.new
+  end
 
   private
 
   def put_board
-    puts "\t a b c d e f g h"
-    puts "\t ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁ "
-    game_board.each do |col|
-      puts "\t▕#{col.first}" + "#{col[1]}" + "#{col[2]}" + "#{col[3]}" + "#{col[4]}" + "#{col[5]}" + "#{col[6]}" + "#{col.last}▏" 
+    coords = %w[a b c d e f g h]
+    num_coords = %w[8 7 6 5 4 3 2 1]
+    puts "\t  " + coords.join(' ')
+    puts "\t  ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁ "
+    game_board.each_with_index do |col, index|
+      puts ["\t", num_coords[index], '|', *col, '|'].join('')
     end
-    puts "\t ▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔"
-    puts "\t a b c d e f g h"
+    puts "\t  ▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔"
+    puts "\t  " + coords.join(' ')
     puts "\n\n"
   end
 
@@ -49,4 +51,5 @@ class Board
 end
 
 chess = Board.new
+chess.populate_board
 chess.display_board
