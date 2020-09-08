@@ -1,21 +1,28 @@
 require 'colorize'
-require_relative './pawns'
-require_relative './king'
-require_relative './queen'
-require_relative './knight'
-require_relative './bishop'
-require_relative './rook'
+require_relative './pieces/pawns'
+require_relative './pieces/king'
+require_relative './pieces/queen'
+require_relative './pieces/knight'
+require_relative './pieces/bishop'
+require_relative './pieces/rook'
+require_relative './modules/board_coords.rb'
 
 # responsible for creating and maintaining board
-
-# responsible for handling board cues
 class Board
+  include BoardCoords
+
   attr_reader :game_board
   def initialize
     setup
   end
 
-  def populate_board
+  # TODO: Add in FROM and TO movement co-ords
+  def move_piece(from)
+    BoardCoords.create_coord(from)
+    # display_board
+  end
+
+  def populate_array
     8.times do |i|
       @game_board[6][i] = Pawn.new(:white).symbol
       @game_board[1][i] = Pawn.new(:black).symbol
@@ -63,7 +70,7 @@ class Board
   end
 
   def put_board
-    coords = [' a ', 'b ', 'c ', 'd ', 'e ', 'f ', 'g ', 'h ']
+    coords = ['a ', 'b ', 'c ', 'd ', 'e ', 'f ', 'g ', 'h ']
     num_coords = %w[8 7 6 5 4 3 2 1]
     puts "\t  " + coords.join(' ')
     @game_board.each_with_index do |col, index|
@@ -75,9 +82,10 @@ class Board
 
   def setup
     @game_board = Array.new(8) { Array.new(8, '   ') }
+    populate_array
   end
 end
 
-chess = Board.new
-chess.populate_board
-chess.display_board
+# chess = Board.new
+# chess.display_board
+# chess.map_board
