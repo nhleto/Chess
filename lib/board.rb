@@ -17,8 +17,11 @@ class Board
   end
 
   # TODO: Add in FROM and TO movement co-ords
-  def move_piece(from)
-    BoardCoords.create_coord(from)
+  def move_piece(from, to)
+    from_coord = BoardCoords.create_coord(from)
+    to_coord = BoardCoords.create_coord(to)
+    p from_coord
+    p to_coord
     # display_board
   end
 

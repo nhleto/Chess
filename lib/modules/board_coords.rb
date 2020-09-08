@@ -2,12 +2,11 @@
 
 # player input to board coordinate
 module BoardCoords
-  def create_coord(from)
-    p from
+  def self.create_coord(input)
     arr = []
-    from = from.split('')
-    x_coord = from[0]
-    y_coord = from[1]
+    input = input.split('')
+    x_coord = input[0]
+    y_coord = input[1]
 
     case x_coord.to_i
     when 1
@@ -46,8 +45,6 @@ module BoardCoords
     when 'h'
       arr << 7
     end
-
-    p arr
     arr
   end
 end

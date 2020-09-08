@@ -1,16 +1,18 @@
 # frozen_string_literal: true
 
 require_relative './board'
+require_relative './error'
 require 'pry'
 
 # game class is responsbile for game loop
 class Game
   Player = Struct.new(:name, :color)
-  attr_reader :board, :player1, :player2, :current_player, :answer, :from, :to
+  attr_reader :board, :player1, :player2, :current_player, :answer, :from, :to, :error
   def initialize
     @player1 = Player.new('Henry', 'white')
     @player2 = Player.new('Sarah', 'black')
     @board = Board.new
+    @error = Error.new
     @current_player = nil
     @answer = nil
     @from = nil
@@ -27,30 +29,41 @@ class Game
   def play_game
     attempts = 0
     while attempts < 1
-      @board.display_board
+      board.display_board
       puts 'Make a move'
       get_move
-      # @board.make_move(@from, @to)
       attempts += 1
     end
   end
 
-  def get_move
+  def set_move
     puts 'Please give the co-ordinates of the piece you are moving'
-    @from = gets.chomp
-    # binding.pry
-    puts 'And where are you moving it?'
-    @to = gets.chomp
-    translate_move(@from, @to)
+    move_from
+    puts 'And where are you moving it to?'
+    move_to
+    board.move_piece(@from, @to)
   end
 
-  # TODO: Add in TO and FROM
-  def translate_move
-    from = '2a'
-    board.display_board
-    board.move_piece(from)
+  def move_from
+    @from = gets.chomp.downcase
+    return @from if @from && input_check?(@from)
+
+    error.input_error
+    move_from
+  end
+
+  def move_to
+    @to = gets.chomp.downcase
+    return @to if @to && input_check?(@to)
+
+    error.input_error
+    move_to
+  end
+
+  def input_check?(input)
+    input.split('').length < 3 && input.split('').length > 1 && input[0].match?(/[1-8]/) && input[1].match?(/[a-h]/)
   end
 end
 
 chess = Game.new
-chess.translate_move
+chess.set_move
