@@ -5,8 +5,8 @@ module BoardCoords
   def self.create_coord(input)
     arr = []
     input = input.split('')
-    x_coord = input[0]
-    y_coord = input[1]
+    x_coord = input[1]
+    y_coord = input[0]
 
     case x_coord.to_i
     when 1

@@ -28,10 +28,10 @@ class Game
 
   def play_game
     attempts = 0
-    while attempts < 1
+    while attempts < 3
       board.display_board
       puts 'Make a move'
-      get_move
+      set_move
       attempts += 1
     end
   end
@@ -41,7 +41,7 @@ class Game
     move_from
     puts 'And where are you moving it to?'
     move_to
-    board.move_piece(@from, @to)
+    board.stage_move(@from, @to)
   end
 
   def move_from
@@ -61,9 +61,9 @@ class Game
   end
 
   def input_check?(input)
-    input.split('').length < 3 && input.split('').length > 1 && input[0].match?(/[1-8]/) && input[1].match?(/[a-h]/)
+    input.split('').length < 3 && input.split('').length > 1 && input[0].match?(/[a-h]/) && input[1].match?(/[1-8]/)
   end
 end
 
 chess = Game.new
-chess.set_move
+chess.play_game

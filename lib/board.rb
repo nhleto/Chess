@@ -16,13 +16,18 @@ class Board
     setup
   end
 
-  # TODO: Add in FROM and TO movement co-ords
-  def move_piece(from, to)
+  def stage_move(from, to)
     from_coord = BoardCoords.create_coord(from)
     to_coord = BoardCoords.create_coord(to)
-    p from_coord
-    p to_coord
-    # display_board
+    start_x, start_y = from_coord
+    to_x, to_y = to_coord
+    make_move(start_x, start_y, to_x, to_y)
+    display_board
+  end
+
+  def make_move(start_x, start_y, to_x, to_y)
+    @game_board[to_x][to_y] = @game_board[start_x][start_y]
+    @game_board[start_x][start_y] = '   '
   end
 
   def populate_array
@@ -91,4 +96,4 @@ end
 
 # chess = Board.new
 # chess.display_board
-# chess.map_board
+# chess.move_piece
