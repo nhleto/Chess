@@ -61,7 +61,7 @@ class Game
   end
 
   def input_check?(input)
-    input.split('').length < 3 && input.split('').length > 1 && input[0].match?(/[a-h]/) && input[1].match?(/[1-8]/)
+    input.split('').length == 2 && input[0].match?(/[a-h]/) && input[1].match?(/[1-8]/)
   end
 end
 

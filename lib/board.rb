@@ -1,4 +1,5 @@
 require 'colorize'
+require 'pry'
 require_relative './pieces/pawns'
 require_relative './pieces/king'
 require_relative './pieces/queen'
@@ -16,13 +17,23 @@ class Board
     setup
   end
 
-  def stage_move(from, to)
+  def stage_move
+    from = 'a2'
+    to = 'a3'
     from_coord = BoardCoords.create_coord(from)
     to_coord = BoardCoords.create_coord(to)
     start_x, start_y = from_coord
+    piece = @game_board[start_x][start_y]
     to_x, to_y = to_coord
-    make_move(start_x, start_y, to_x, to_y)
+
+    valid_move?(from_coord, piece)
+    # make_move(start_x, start_y, to_x, to_y)
     display_board
+  end
+
+  def valid_move?(from_coord, piece)
+    p piece
+
   end
 
   def make_move(start_x, start_y, to_x, to_y)
@@ -94,6 +105,6 @@ class Board
   end
 end
 
-# chess = Board.new
-# chess.display_board
-# chess.move_piece
+chess = Board.new
+chess.display_board
+chess.stage_move
