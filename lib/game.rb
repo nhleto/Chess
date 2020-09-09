@@ -65,5 +65,5 @@ class Game
   end
 end
 
-chess = Game.new
-chess.play_game
+# chess = Game.new
+# chess.play_game
