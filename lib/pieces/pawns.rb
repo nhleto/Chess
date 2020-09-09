@@ -1,26 +1,24 @@
 # frozen_string_literal: true
 
 require 'colorize'
-# require_relative './lib/board.rb'
+# require_relative '../board.rb'
 
 # pawn clas
 class Pawn
-  attr_reader :color, :symbol, :piece_type
-  def initialize(color = :white)
+  attr_reader :color, :symbol
+  def initialize(color)
     @color = color
     @symbol = piece
-    @piece_type = 'pawn'
-  end
-
-  def class_name
-    self.class
   end
 
   def piece
     @color == :white ? " \u2659 " : " \u265F ".white
   end
 
-  def starting_moves(from)
+  def starting_moves(from, to)
+    # p from
+    # p to
+    i, j = to
     x, y = from
     moves = []
     if x == 6 && @color == :white
@@ -40,6 +38,14 @@ class Pawn
       moves << [x + 1, y + 1]
       moves << [x + 1, y - 1]
     end
+    check_moves?(moves, from, to)
+  end
+
+  def check_moves?(moves, from, to)
+    p moves
+    p from
+    p to
+    p moves.include?(to)
   end
 end
 
