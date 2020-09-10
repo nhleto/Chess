@@ -24,11 +24,13 @@ class Rook
   end
 
   def check_moves?(moves, to)
-    moves.include?(to)
-    p moves.include?(to)
+    moves.include?(to) && on_board?(to)
+    p moves.include?(to) && on_board?(to) 
   end
 
-  def piece_in_the_way?
-    
+  # hopfully on_board? can become an integrated way to negate bad values
+  def on_board?(to)
+    x, y = to
+    ((0..7).include?(x) && (0..7).include?(y))
   end
 end

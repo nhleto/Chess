@@ -42,10 +42,10 @@ class Pawn
     p moves.include?(to)
   end
 
-  def forwards_backwards?(from, to)
-    p from, to
-    p @color == :white && from[0] < to[0] ? false : true
-  end
+  # def forwards_backwards?(from, to)
+  #   p from, to
+  #   p @color == :white && from[0] < to[0] ? false : true
+  # end
 
   def on_board?(to)
     x, y = to

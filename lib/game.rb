@@ -46,10 +46,12 @@ class Game
     move_to
     end_move = board.input_to_coords(to)
     vet_piece_move?(start_move, end_move)
+    # piece_move_real?(start_move, end_move)
   end
 
   # Have this method return a boolean and eventually chain it together with piece_move_real?
   def vet_piece_move?(from, to)
+    p from, to
     piece = board.get_active_piece(from)
     piece.starting_moves(from, to)
   end

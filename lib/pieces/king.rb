@@ -10,4 +10,14 @@ class King
   def piece
     @color == :white ? " \u2654 ".white : " \u265A ".black
   end
+
+  def starting_moves(from, to)
+    x, y = from
+    moves = []
+
+  end
+
+  def check_moves?(moves, to)
+    
+  end
 end
