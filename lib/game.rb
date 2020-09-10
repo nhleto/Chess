@@ -4,9 +4,8 @@ require_relative './board'
 require_relative './error'
 require 'pry'
 
-# game class is responsbile for game loop
+# game class is responsbile for game loop and game logic
 class Game
-  Player = Struct.new(:name, :color)
   attr_reader :board, :player1, :player2, :current_player, :answer, :from, :to, :error
   def initialize
     @player1 = Player.new('Henry', 'white')

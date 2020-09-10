@@ -18,9 +18,9 @@ class Board
   def initialize
     setup
     @error = Error.new
-    @game = Game.new
   end
 
+  # TODO: add back from / to as arguments
   def stage_move
     from = 'h7'
     to = 'h4'
@@ -31,6 +31,7 @@ class Board
     valid_move?(from_coord, to_coord, piece)
   end
 
+  # move this method to the game class. Make game class responsible for game logic
   def valid_move?(from_coord, to_coord, piece)
     case piece.name
     when 'Pawn'
@@ -38,7 +39,7 @@ class Board
         make_move(from, to)
       else
         error.pawn_movement
-        game.move_to
+        game.move_to # is there a a better way to do this?
       end
     end
   end
