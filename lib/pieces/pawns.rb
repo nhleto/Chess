@@ -8,7 +8,6 @@ class Pawn
   def initialize(color)
     @color = color
     @symbol = piece
-    @name = 'Pawn'
   end
 
   def piece
@@ -40,5 +39,16 @@ class Pawn
 
   def check_moves?(moves, to)
     moves.include?(to)
+    p moves.include?(to)
+  end
+
+  def forwards_backwards?(from, to)
+    p from, to
+    p @color == :white && from[0] < to[0] ? false : true
+  end
+
+  def on_board?(to)
+    x, y = to
+    ((0..7).include?(x) && (0..7).include?(y))
   end
 end

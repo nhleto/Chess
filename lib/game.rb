@@ -40,15 +40,22 @@ class Game
   def set_move
     puts "\nPlease give the co-ordinates of the piece you are moving"
     move_from
-    board.get_active_piece(from)
+    # board.get_active_piece(from)
     start_move = board.input_to_coords(from)
     puts 'And where are you moving the piece to?'
     move_to
     end_move = board.input_to_coords(to)
-    piece_move_valid?(start_move, end_move)
+    vet_piece_move?(start_move, end_move)
   end
 
-  def piece_move_valid?(from, to)
+  # Have this method return a boolean and eventually chain it together with piece_move_real?
+  def vet_piece_move?(from, to)
+    piece = board.get_active_piece(from)
+    piece.starting_moves(from, to)
+  end
+
+  # TODO // Add this method into error checking before piece placement
+  def piece_move_real?(from, to)
     if board.a_piece?(from)
       board.make_move(from, to)
     else
