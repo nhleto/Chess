@@ -8,31 +8,35 @@ require_relative './pieces/bishop'
 require_relative './pieces/rook'
 require_relative './modules/board_coords.rb'
 require_relative './error.rb'
-require_relative './game.rb'
 
 # responsible for creating and maintaining board
 class Board
   include BoardCoords
 
-  attr_reader :game_board, :error, :game
+  attr_reader :game_board, :error, :game, :active_piece
   def initialize
     setup
     @error = Error.new
+    @active_piece = active_piece
   end
 
-  # TODO: add back from / to as arguments
-  def stage_move
-    from = 'h7'
-    to = 'h4'
-    from_coord = BoardCoords.create_coord(from)
-    to_coord = BoardCoords.create_coord(to)
-    start_x, start_y = from_coord
-    piece = game_board[start_x][start_y]
-    valid_move?(from_coord, to_coord, piece)
+  def get_active_piece(from)
+    from = input_to_coords(from)
+    x, y = from
+    @active_piece = game_board[x][y]
+  end
+
+  def a_piece?(from)
+    x, y = from
+    game_board[x][y] != '   '
+  end
+
+  def input_to_coords(input)
+    BoardCoords.create_coord(input)
   end
 
   # move this method to the game class. Make game class responsible for game logic
-  def valid_move?(from_coord, to_coord, piece)
+  def valid_move_for_piece?(from_coord, to_coord, piece)
     case piece.name
     when 'Pawn'
       if piece.starting_moves(from_coord, to_coord)
@@ -131,7 +135,7 @@ class Board
   end
 end
 
-chess = Board.new
-chess.display_board
-chess.stage_move
-chess.display_board
+# chess = Board.new
+# chess.display_board
+# chess.stage_move
+# chess.display_board

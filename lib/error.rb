@@ -7,6 +7,10 @@ class Error
   end
 
   def pawn_movement
-    puts 'This is not a valid move for a pawn. Pleae try again...'
+    puts 'This is not a valid move for a pawn. Please try again...'
+  end
+
+  def piece
+    puts "\nYou did not select a valid piece"
   end
 end

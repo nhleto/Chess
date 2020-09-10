@@ -16,8 +16,6 @@ class Pawn
   end
 
   def starting_moves(from, to)
-    p from
-    p to
     x, y = from
     moves = []
     if x == 6 && @color == :white

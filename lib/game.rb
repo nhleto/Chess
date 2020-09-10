@@ -6,6 +6,7 @@ require 'pry'
 
 # game class is responsbile for game loop and game logic
 class Game
+  Player = Struct.new(:name, :color)
   attr_reader :board, :player1, :player2, :current_player, :answer, :from, :to, :error
   def initialize
     @player1 = Player.new('Henry', 'white')
@@ -18,7 +19,7 @@ class Game
     @to = nil
   end
 
-  #TODO: create set_players and intro_text
+  # TODO: create set_players and intro_text
   def start_game
     # set_players
     # intro_text
@@ -27,20 +28,33 @@ class Game
 
   def play_game
     attempts = 0
-    while attempts < 3
+    while attempts < 1
       board.display_board
       puts 'Make a move'
       set_move
+      board.display_board
       attempts += 1
     end
   end
 
   def set_move
-    puts 'Please give the co-ordinates of the piece you are moving'
+    puts "\nPlease give the co-ordinates of the piece you are moving"
     move_from
-    puts 'And where are you moving it to?'
+    board.get_active_piece(from)
+    start_move = board.input_to_coords(from)
+    puts 'And where are you moving the piece to?'
     move_to
-    board.stage_move(@from, @to)
+    end_move = board.input_to_coords(to)
+    piece_move_valid?(start_move, end_move)
+  end
+
+  def piece_move_valid?(from, to)
+    if board.a_piece?(from)
+      board.make_move(from, to)
+    else
+      error.piece
+      set_move
+    end
   end
 
   def move_from
@@ -64,5 +78,5 @@ class Game
   end
 end
 
-# chess = Game.new
-# chess.play_game
+chess = Game.new
+chess.play_game
