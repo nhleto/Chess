@@ -20,12 +20,15 @@ class Rook
       moves << [x, y + i]
       moves << [x, y - i]
     end
+    moves.select! do |cell|
+      cell[0].between?(0, 8) && cell[1].between?(0, 8)
+    end
     check_moves?(moves, to)
   end
 
   def check_moves?(moves, to)
     moves.include?(to) && on_board?(to)
-    p moves.include?(to) && on_board?(to) 
+    p moves.include?(to) && on_board?(to)
   end
 
   # hopfully on_board? can become an integrated way to negate bad values

@@ -20,6 +20,9 @@ class Bishop
       moves << [x + i, y + i]
       moves << [x - i, y - i]
     end
+    moves.select! do |cell|
+      cell[0].between?(0, 8) && cell[1].between?(0, 8)
+    end
     check_moves?(moves, to)
   end
 

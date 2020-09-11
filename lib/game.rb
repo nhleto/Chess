@@ -51,11 +51,8 @@ class Game
 
   # Have this method return a boolean and eventually chain it together with piece_move_real?
   def vet_piece_move?(from, to)
-    p from, to
-
     piece = board.get_active_piece(from)
     piece.starting_moves(from, to)
-    p piece.starting_moves(from, to)
   end
 
   # TODO // Add this method into error checking before piece placement

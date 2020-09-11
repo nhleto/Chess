@@ -19,11 +19,15 @@ class King
     moves << [x, y + 1]
     moves << [x, y - 1]
     moves << [x + 1, y + 1]
-    moves << [x -1, y - 1]
+    moves << [x - 1, y - 1]
+    moves.select! do |cell|
+      cell[0].between?(0, 8) && cell[1].between?(0, 8)
+    end
     check_moves?(to, moves)
   end
 
-  def check_moves?(moves, to)
+  def check_moves?(to, moves)
     moves.include?(to)
+    p moves.include?(to)
   end
 end
