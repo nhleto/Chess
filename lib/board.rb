@@ -123,7 +123,7 @@ class Board
     num_coords = %w[8 7 6 5 4 3 2 1]
     puts "\t  " + coords.join(' ')
     board.each_with_index do |col, index|
-      puts ["\t", num_coords[index], *col].join('')
+      puts ["\t", num_coords[index], *col, num_coords[index]].join('')
     end
     puts "\t  " + coords.join(' ')
     puts "\n\n"

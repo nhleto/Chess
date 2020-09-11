@@ -53,7 +53,28 @@ class Game
   def vet_piece_move?(from, to)
     piece = board.get_active_piece(from)
     piece.starting_moves(from, to)
-    p piece
+    run_into_piece?(from, to, piece)
+  end
+
+  def run_into_piece?(from, to, piece)
+    x, y = from
+    i, j = to
+    piece.moves.each do |move|
+      x_pos, y_pos = move
+      p board.game_board[x_pos][y_pos]
+      p x_pos, y_pos
+      if board.game_board[x_pos][y_pos] == true && 
+        break
+      end
+      # loop do
+
+
+      #   if board.game_board[x_pos][y_pos] == to
+      #     puts 'We have reached to'
+      #     break
+      #   end
+      # end
+    end
   end
 
   # TODO: Add this method into error checking before piece placement
