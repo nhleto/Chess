@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
-class Rook
+require_relative './piece.rb'
+require 'colorize'
+
+class Rook < Piece
   attr_reader :color, :symbol
   def initialize(color)
     @color = color
@@ -13,14 +16,14 @@ class Rook
 
   def starting_moves(from, to)
     x, y = from
-    moves = []
+    @moves = []
     8.times do |i|
       moves << [x - i, y]
       moves << [x + i, y]
       moves << [x, y + i]
       moves << [x, y - i]
     end
-    moves.select! do |cell|
+    @moves.select! do |cell|
       cell[0].between?(0, 8) && cell[1].between?(0, 8)
     end
     check_moves?(moves, to)

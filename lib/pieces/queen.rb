@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
-class Queen
+require_relative './piece.rb'
+require 'colorize'
+
+class Queen < Piece
   attr_reader :color, :symbol
   def initialize(color)
     @color = color
@@ -13,9 +16,9 @@ class Queen
 
   def starting_moves(from, to)
     x, y = from
-    moves = []
+    @moves = []
     8.times do |i|
-      moves.push(
+      @moves.push(
         [x + i, y],
         [x - i, y],
         [x, y - i],
@@ -25,7 +28,7 @@ class Queen
         [x - i, y + i],
         [x + i, y - i]
       )
-      moves.select! do |cell|
+      @moves.select! do |cell|
         cell[0].between?(0, 8) && cell[1].between?(0, 8)
       end
     end

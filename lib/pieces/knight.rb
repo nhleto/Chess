@@ -1,7 +1,10 @@
 # frozen_string_literal: true
 
-class Knight
-  attr_reader :color, :symbol
+require_relative './piece.rb'
+require 'colorize'
+
+class Knight < Piece
+  attr_reader :symbol, :color
   def initialize(color)
     @color = color
     @symbol = piece
@@ -13,7 +16,7 @@ class Knight
 
   def starting_moves(from, to)
     x, y = from
-    moves = []
+    @moves = []
     moves.push(
       [x + 2, y + 1],
       [x + 2, y - 1],
@@ -24,14 +27,13 @@ class Knight
       [x - 1, y + 2],
       [x - 1, y - 2]
     )
-    moves.select! do |cell|
-      cell[0].between?(0, 8) && cell[1].between?(0, 8)
+    @moves.select! do |cell|
+      cell[0].between?(0, 7) && cell[1].between?(0, 7)
     end
     check_moves?(moves, to)
   end
 
   def check_moves?(moves, to)
-    p moves
     moves.include?(to)
     p moves.include?(to)
   end

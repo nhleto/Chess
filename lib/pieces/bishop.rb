@@ -1,7 +1,10 @@
 # frozen_string_literal: true
 
-class Bishop
-  attr_reader :color, :symbol
+require_relative './piece.rb'
+require 'colorize'
+
+class Bishop < Piece
+  attr_reader :symbol, :color
   def initialize(color)
     @color = color
     @symbol = piece
@@ -13,15 +16,15 @@ class Bishop
 
   def starting_moves(from, to)
     x, y = from
-    moves = []
+    @moves = []
     8.times do |i|
       moves << [x - i, y + i]
       moves << [x + i, y - i]
       moves << [x + i, y + i]
       moves << [x - i, y - i]
     end
-    moves.select! do |cell|
-      cell[0].between?(0, 8) && cell[1].between?(0, 8)
+    @moves.select! do |cell|
+      cell[0].between?(0, 7) && cell[1].between?(0, 7)
     end
     check_moves?(moves, to)
   end

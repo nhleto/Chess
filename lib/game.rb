@@ -53,9 +53,10 @@ class Game
   def vet_piece_move?(from, to)
     piece = board.get_active_piece(from)
     piece.starting_moves(from, to)
+    p piece
   end
 
-  # TODO // Add this method into error checking before piece placement
+  # TODO: Add this method into error checking before piece placement
   def piece_move_real?(from, to)
     if board.a_piece?(from)
       board.make_move(from, to)

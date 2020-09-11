@@ -4,10 +4,10 @@ require 'colorize'
 
 # pawn clas
 class Pawn
-  attr_reader :color, :symbol, :name
+  attr_reader :symbol, :color
   def initialize(color)
-    @color = color
     @symbol = piece
+    @color = color
   end
 
   def piece
@@ -16,39 +16,37 @@ class Pawn
 
   def starting_moves(from, to)
     x, y = from
-    moves = []
+    @moves = []
     if x == 6 && @color == :white
-      moves << [x - 1, y]
-      moves << [x - 2, y]
+      @moves << [x - 1, y]
+      @moves << [x - 2, y]
     else
-      moves << [x - 1, y]
-      moves << [x - 1, y - 1]
-      moves << [x - 1, y + 1]
+      @moves << [x - 1, y]
+      @moves << [x - 1, y - 1]
+      @moves << [x - 1, y + 1]
     end
 
     if x == 1 && @color == :black
-      moves << [x + 1, y]
-      moves << [x + 2, y]
+      @moves << [x + 1, y]
+      @moves << [x + 2, y]
     else
-      moves << [x + 1, y]
-      moves << [x + 1, y + 1]
-      moves << [x + 1, y - 1]
+      @moves << [x + 1, y]
+      @moves << [x + 1, y + 1]
+      @moves << [x + 1, y - 1]
     end
-    check_moves?(moves, to)
+    @@moves.select! do |cell|
+      cell[0].between?(0, 7) && cell[1].between?(0, 7)
+    end
+    check_moves?(to)
   end
 
-  def check_moves?(moves, to)
-    moves.include?(to)
-    p moves.include?(to)
+  def check_moves?(to)
+    @moves.include?(to)
+    p @moves.include?(to)
   end
 
   # def forwards_backwards?(from, to)
   #   p from, to
   #   p @color == :white && from[0] < to[0] ? false : true
   # end
-
-  def on_board?(to)
-    x, y = to
-    ((0..7).include?(x) && (0..7).include?(y))
-  end
 end
