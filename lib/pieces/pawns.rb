@@ -45,9 +45,4 @@ class Pawn < Piece
     @moves.include?(to)
     p @moves.include?(to)
   end
-
-  # def forwards_backwards?(from, to)
-  #   p from, to
-  #   p @color == :white && from[0] < to[0] ? false : true
-  # end
 end

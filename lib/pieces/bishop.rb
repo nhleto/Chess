@@ -30,7 +30,7 @@ class Bishop < Piece
   end
 
   def check_moves?(moves, to)
-    moves.include?(to)
+    moves.uniq.include?(to)
     p moves.include?(to)
   end
 end

@@ -28,7 +28,7 @@ class Game
 
   def play_game
     attempts = 0
-    while attempts < 1
+    while attempts < 3
       board.display_board
       puts 'Make a move'
       set_move
@@ -46,35 +46,21 @@ class Game
     move_to
     end_move = board.input_to_coords(to)
     vet_piece_move?(start_move, end_move)
+    board.move_it(from, to)
     # piece_move_real?(start_move, end_move)
   end
 
   # Have this method return a boolean and eventually chain it together with piece_move_real?
-  def vet_piece_move?(from, to)
+  def vet_piece_move?(from, _to)
     piece = board.get_active_piece(from)
-    piece.starting_moves(from, to)
-    run_into_piece?(from, to, piece)
+    # piece.starting_moves(from, to)
+    p check_horizontal_same?(from, to, piece)
+    p check_vertical_same?(from, piece)
   end
 
-  def run_into_piece?(from, to, piece)
-    x, y = from
-    i, j = to
-    piece.moves.each do |move|
-      x_pos, y_pos = move
-      p board.game_board[x_pos][y_pos]
-      p x_pos, y_pos
-      if board.game_board[x_pos][y_pos] == true && 
-        break
-      end
-      # loop do
-
-
-      #   if board.game_board[x_pos][y_pos] == to
-      #     puts 'We have reached to'
-      #     break
-      #   end
-      # end
-    end
+  # Return true if the piece to the left / right is same color or '   '
+  def check_horizontal_same?(from, _to, piece)
+    adjacent_left_right_same?(from, piece)
   end
 
   # TODO: Add this method into error checking before piece placement
@@ -84,6 +70,52 @@ class Game
     else
       error.piece
       set_move
+    end
+  end
+
+  private
+
+  def check_vertical_same?(from, piece)
+    x, y = from
+    adjacent_piece_up = board.game_board[x - 1][y]
+    adjacent_piece_down = board.game_board[x] == board.game_board[7] ? '   ' : board.game_board[x + 1][y]
+    binding.pry
+    if adjacent_piece_up == '   ' && adjacent_piece_down == '   ' || adjacent_piece_up == '   ' && adjacent_piece_down.color == piece.color || adjacent_piece_down == '   ' && adjacent_piece_up.color == piece.color
+      true
+    elsif adjacent_piece_up == '   ' && adjacent_piece_down.color != piece.color
+      false
+    elsif adjacent_piece_up.color != piece.color && adjacent_piece_down == '   '
+      false
+    elsif adjacent_piece_up.color == piece.color && adjacent_piece_down.color == piece.color
+      true
+    elsif adjacent_piece_up.color != piece.color && adjacent_piece_down.color != piece.color
+      false
+    elsif board.game_board[x] == board.game_board[0] && adjacent_piece_up.color != piece.color && adjacent_piece_down.color == piece.color
+      true
+    end
+  end
+
+  # left and right will never be nill
+  def adjacent_left_right_same?(from, piece)
+    # p from
+    x, y = from
+    adjacent_piece_left = board.game_board[x][y - 1]
+    adjacent_piece_right = board.game_board[y] == board.game_board[7] ? '   ' : board.game_board[x][y + 1]
+    # binding.pry
+    if adjacent_piece_left == '   ' && adjacent_piece_right == '   ' || adjacent_piece_right == '   ' && adjacent_piece_left.color == piece.color || adjacent_piece_left == '   ' && adjacent_piece_right.color == piece.color
+      true
+    elsif adjacent_piece_left == '   ' && adjacent_piece_right.color != piece.color
+      false
+    elsif adjacent_piece_left.color != piece.color && adjacent_piece_right == '   '
+      false
+    elsif adjacent_piece_left.color != piece.color && adjacent_piece_right.color == piece.color
+      false
+    elsif adjacent_piece_left.color == piece.color && adjacent_piece_right.color != piece.color
+      false
+    elsif adjacent_piece_left.color == piece.color && adjacent_piece_right.color == piece.color
+      true
+    elsif adjacent_piece_left.color != piece.color && adjacent_piece_right.color != piece.color
+      false
     end
   end
 

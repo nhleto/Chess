@@ -20,6 +20,12 @@ class Board
     @active_piece = active_piece
   end
 
+  def move_it(from, to)
+    from = input_to_coords(from)
+    to = input_to_coords(to)
+    make_move(from, to)
+  end
+
   def get_active_piece(from)
     # from = input_to_coords(from)
     x, y = from
@@ -107,7 +113,7 @@ class Board
     board[0][1] = Knight.new(:black)
     board[0][6] = Knight.new(:black)
 
-    board[7][2] = Bishop.new(:white)
+    board[7][2] = Bishop.new(:black)
     board[7][5] = Bishop.new(:white)
     board[0][2] = Bishop.new(:black)
     board[0][5] = Bishop.new(:black)
