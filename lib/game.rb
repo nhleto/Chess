@@ -7,7 +7,7 @@ require 'pry'
 # game class is responsbile for game loop and game logic
 class Game
   Player = Struct.new(:name, :color)
-  attr_reader :board, :player1, :player2, :current_player, :answer, :from, :to, :error
+  attr_reader :board, :player1, :player2, :current_player, :answer, :from, :to, :error, :diag_val
   def initialize
     @player1 = Player.new('Henry', 'white')
     @player2 = Player.new('Sarah', 'black')
@@ -17,6 +17,7 @@ class Game
     @answer = nil
     @from = nil
     @to = nil
+    @diag_val = nil
   end
 
   # TODO: create set_players and intro_text
@@ -51,11 +52,13 @@ class Game
   end
 
   # Have this method return a boolean and eventually chain it together with piece_move_real?
-  def vet_piece_move?(from, _to)
+  def vet_piece_move?(from, to)
     piece = board.get_active_piece(from)
     # piece.starting_moves(from, to)
-    p check_horizontal_same?(from, to, piece)
-    p check_vertical_same?(from, piece)
+    # p check_horizontal_same?(from, to, piece)
+    # p check_vertical_same?(from, piece)
+    # check_diagonal_same?(from, to, piece)
+    p check_diagonal_same?(from, to)
   end
 
   # Return true if the piece to the left / right is same color or '   '
@@ -63,23 +66,51 @@ class Game
     adjacent_left_right_same?(from, piece)
   end
 
-  # TODO: Add this method into error checking before piece placement
-  def piece_move_real?(from, to)
-    if board.a_piece?(from)
-      board.make_move(from, to)
-    else
-      error.piece
-      set_move
+  # return true if diagonal pieces are same color, return false otherwise
+  def check_diagonal_same?(from, to)
+    x, y = from
+    direction_x, direction_y = create_direction_vector(from, to)
+    return false if from == to
+
+    current = []
+    current << (x + direction_x)
+    current << (y + direction_y)
+
+    until current == to
+      if board.game_board[current[0]][current[1]] != '   '
+        @diag_val = board.game_board[current[0]][current[1]]
+        return true
+      end
+
+      current[0] += direction_x
+      current[1] += direction_y
     end
+    false
   end
 
+  def parse_diag_value
+    p diag_val
+  end
+  
   private
+
+  def create_direction_vector(from, to)
+    x, y = from
+    i, j = to
+    direction = []
+    direction << sign((i - x))
+    direction << sign((j - y))
+  end
+
+  def sign(num)
+    num <=> 0
+  end
 
   def check_vertical_same?(from, piece)
     x, y = from
     adjacent_piece_up = board.game_board[x - 1][y]
     adjacent_piece_down = board.game_board[x] == board.game_board[7] ? '   ' : board.game_board[x + 1][y]
-    binding.pry
+    # binding.pry
     if adjacent_piece_up == '   ' && adjacent_piece_down == '   ' || adjacent_piece_up == '   ' && adjacent_piece_down.color == piece.color || adjacent_piece_down == '   ' && adjacent_piece_up.color == piece.color
       true
     elsif adjacent_piece_up == '   ' && adjacent_piece_down.color != piece.color
