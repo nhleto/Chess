@@ -13,4 +13,8 @@ class Error
   def piece
     puts "\nYou did not select a valid piece"
   end
+
+  def bishop_error
+    puts "\nThat is not a valid move for a bishop. Please try again..."
+  end
 end

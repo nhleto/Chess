@@ -9,4 +9,8 @@ class Piece
   def name
     name
   end
+
+  def a_piece?
+    name != String
+  end
 end
