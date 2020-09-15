@@ -2,6 +2,7 @@
 
 require_relative './board'
 require_relative './error'
+require_relative './modules/vector'
 require 'pry'
 
 # game class is responsbile for game loop and game logic
@@ -47,45 +48,40 @@ class Game
     move_to
     end_move = board.input_to_coords(to)
     vet_piece_move?(start_move, end_move)
+    board.move_it(from, to)
   end
 
   # Have this method return a boolean and eventually chain it together with piece_move_real?
   def vet_piece_move?(from, to)
     piece = board.get_active_piece(from)
     # piece.starting_moves(from, to)
-    # p check_horizontal_same?(from, piece) # return true if left / right pieces are the same color
+    # p check_horizontal_same?(from, to, piece) # return true if left / right pieces are the same color
     # p check_vertical_same?(from, piece) # return true if up / down pieces are the same color
-    # check_diagonal_same?(from, to, piece) # return false if piece passes through another piece / true if [to] == '   '
-    if valid_piece_move?(from, to, piece)
-      board.move.it(from, to)
-    else
-      error.bishop_error
-      play_game
-    end
+    # p check_diagonal_same?(from, to, piece) # return false if piece passes through another piece/true if [to] == '   '
+    p valid_piece_move?(from, to, piece)
   end
 
   def valid_piece_move?(from, to, piece)
     # binding.pry
     case piece.class.name
     when 'Pawn'
-      return true if check_horizontal_same?(from, piece) && piece.starting_moves(from, to)
+      check_piece_in_way?(from, to, piece) && piece.starting_moves(from, to) && legal_capture?(current, to, piece) ? true : false
+      # binding.pry
     when 'King'
       puts 'its a king'
-    when 'Queen'
-      puts 'its a queen'
-    when 'Bishop'
-      check_diagonal_same?(from, to, piece) && piece.starting_moves(from, to) && legal_capture?(current, to, piece) ? true : false
+      check_piece_in_way?(from, to, piece) && piece.starting_moves(from, to) && legal_capture?(current, to, piece) ? true : false
+    when 'Knight'
+      validate_knight?(to, piece) && piece.starting_moves(from, to) ? true : false
+    else
+      p piece.class.name
+      check_piece_in_way?(from, to, piece) && piece.starting_moves(from, to) && legal_capture?(current, to, piece) ? true : false
     end
   end
 
   # Return true if the piece to the left / right is same color or '   '
-  def check_horizontal_same?(from, piece)
-    adjacent_left_right_same?(from, piece)
-  end
-
-  def check_diagonal_same?(from, to, piece)
+  def check_piece_in_way?(from, to, piece)
     x, y = from
-    direction_x, direction_y = create_direction_vector(from, to)
+    direction_x, direction_y = Vector.create_direction_vector(from, to)
     from_equals_to?(from, to)
 
     @current = []
@@ -124,6 +120,20 @@ class Game
     end
   end
 
+  def validate_knight?(to, piece)
+    i, j = to
+    if board.game_board[i][j] != '   '
+      destination = board.game_board[i][j]
+      if destination.color != piece.color
+        true
+      elsif destination.color == piece.color
+        false
+      end
+    else
+      true
+    end
+  end
+
   private
 
   def reset_diag_val
@@ -132,61 +142,6 @@ class Game
 
   def from_equals_to?(from, to)
     return false if from == to
-  end
-
-  def create_direction_vector(from, to)
-    x, y = from
-    i, j = to
-    direction = []
-    direction << sign((i - x))
-    direction << sign((j - y))
-  end
-
-  def sign(num)
-    num <=> 0
-  end
-
-  def check_vertical_same?(from, piece)
-    x, y = from
-    adjacent_piece_up = board.game_board[x - 1][y]
-    adjacent_piece_down = board.game_board[x] == board.game_board[7] ? '   ' : board.game_board[x + 1][y]
-    # binding.pry
-    if adjacent_piece_up == '   ' && adjacent_piece_down == '   ' || adjacent_piece_up == '   ' && adjacent_piece_down.color == piece.color || adjacent_piece_down == '   ' && adjacent_piece_up.color == piece.color
-      true
-    elsif adjacent_piece_up == '   ' && adjacent_piece_down.color != piece.color
-      false
-    elsif adjacent_piece_up.color != piece.color && adjacent_piece_down == '   '
-      false
-    elsif adjacent_piece_up.color == piece.color && adjacent_piece_down.color == piece.color
-      true
-    elsif adjacent_piece_up.color != piece.color && adjacent_piece_down.color != piece.color
-      false
-    elsif board.game_board[x] == board.game_board[0] && adjacent_piece_up.color != piece.color && adjacent_piece_down.color == piece.color
-      true
-    end
-  end
-
-  def adjacent_left_right_same?(from, piece)
-    # p from
-    x, y = from
-    adjacent_piece_left = board.game_board[x][y - 1]
-    adjacent_piece_right = board.game_board[y] == board.game_board[7] ? '   ' : board.game_board[x][y + 1]
-    # binding.pry
-    if adjacent_piece_left == '   ' && adjacent_piece_right == '   ' || adjacent_piece_right == '   ' && adjacent_piece_left.color == piece.color || adjacent_piece_left == '   ' && adjacent_piece_right.color == piece.color
-      true
-    elsif adjacent_piece_left == '   ' && adjacent_piece_right.color != piece.color
-      false
-    elsif adjacent_piece_left.color != piece.color && adjacent_piece_right == '   '
-      false
-    elsif adjacent_piece_left.color != piece.color && adjacent_piece_right.color == piece.color
-      false
-    elsif adjacent_piece_left.color == piece.color && adjacent_piece_right.color != piece.color
-      false
-    elsif adjacent_piece_left.color == piece.color && adjacent_piece_right.color == piece.color
-      true
-    elsif adjacent_piece_left.color != piece.color && adjacent_piece_right.color != piece.color
-      false
-    end
   end
 
   def move_from

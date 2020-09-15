@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# super piece class
 class Piece
   attr_accessor :moves
   def initialize
