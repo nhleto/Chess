@@ -113,7 +113,7 @@ class Board
     board[0][1] = Knight.new(:black)
     board[0][6] = Knight.new(:black)
 
-    board[7][2] = Bishop.new(:black)
+    board[7][2] = Bishop.new(:white)
     board[7][5] = Bishop.new(:white)
     board[0][2] = Bishop.new(:black)
     board[0][5] = Bishop.new(:black)

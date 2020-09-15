@@ -55,44 +55,102 @@ class Game
   def vet_piece_move?(from, to)
     piece = board.get_active_piece(from)
     # piece.starting_moves(from, to)
-    # p check_horizontal_same?(from, to, piece)
-    # p check_vertical_same?(from, piece)
-    # check_diagonal_same?(from, to, piece)
-    p check_diagonal_same?(from, to)
+    # p check_horizontal_same?(from, piece) # return true if left / right pieces are the same color
+    # p check_vertical_same?(from, piece) # return true if up / down pieces are the same color
+    p check_diagonal_same?(from, to, piece) # return true if piece passes through another piece
+    # p valid_piece_move?(from, to, piece)
+  end
+
+  def valid_piece_move?(from, to, piece)
+    # binding.pry
+    case piece.class.name
+    when 'Pawn'
+      return true if check_horizontal_same?(from, piece) && piece.starting_moves(from, to)
+    when 'King'
+      puts 'its a king'
+    when 'Queen'
+      puts 'its a queen'
+    when 'Bishop'
+      puts 'its a bishop'
+      # return true if check_diagonal_same?(from, to, piece) && piece.starting_moves(from, to)
+
+      # binding.pry
+      # return false
+
+    end
   end
 
   # Return true if the piece to the left / right is same color or '   '
-  def check_horizontal_same?(from, _to, piece)
+  def check_horizontal_same?(from, piece)
     adjacent_left_right_same?(from, piece)
   end
 
-  # return true if diagonal pieces are same color, return false otherwise
-  def check_diagonal_same?(from, to)
+  def check_diagonal_same?(from, to, piece)
     x, y = from
+    i, j = to
     direction_x, direction_y = create_direction_vector(from, to)
-    return false if from == to
+    from_equals_to?(from, to)
 
     current = []
     current << (x + direction_x)
     current << (y + direction_y)
+    current << i
+    current << j
 
     until current == to
       if board.game_board[current[0]][current[1]] != '   '
-        @diag_val = board.game_board[current[0]][current[1]]
-        return true
+        @diag_val = board.game_board[current[0]][current[1]] # use value to parse if legal capture or not
+        # parse_diag_value(piece)
+        return false
       end
 
       current[0] += direction_x
       current[1] += direction_y
     end
-    false
+    true
   end
 
-  def parse_diag_value
-    p diag_val
+  # def new_horizontal_check?(from, to, piece)
+  #   x, y = from
+  #   i, j = to
+  #   direction_x, direction_y = create_direction_vector(from, to)
+  #   from_equals_to?(from, to)
+
+  #   current = []
+  #   current << (x + direction_x)
+  #   current << (y + direction_y)
+  #   current << i
+  #   current << j
+
+  #   until current == to
+  #     if board.game_board[current[0]][current[1]] != '   '
+  #       @diag_val = board.game_board[current[0]][current[1]] # use value to parse if legal capture or not
+  #       parse_diag_value(piece)
+  #       return false
+  #     end
+
+  #     current[0] += direction_x
+  #     current[1] += direction_y
+  #   end
+  #   true
+  # end
+
+  def parse_diag_value(piece)
+    if diag_val.color != piece.color
+      puts 'this is a legal capture'
+      reset_diag_val
+    end
   end
-  
+
   private
+
+  def reset_diag_val
+    @diag_val = nil
+  end
+
+  def from_equals_to?(from, to)
+    return false if from == to
+  end
 
   def create_direction_vector(from, to)
     x, y = from
@@ -126,7 +184,6 @@ class Game
     end
   end
 
-  # left and right will never be nill
   def adjacent_left_right_same?(from, piece)
     # p from
     x, y = from

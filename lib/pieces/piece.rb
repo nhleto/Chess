@@ -5,4 +5,8 @@ class Piece
   def initialize
     @moves = moves
   end
+
+  def name
+    name
+  end
 end
