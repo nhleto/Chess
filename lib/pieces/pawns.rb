@@ -41,6 +41,29 @@ class Pawn < Piece
     check_moves?(to)
   end
 
+  def capture_piece(from, to, board)
+    i, j = to
+    if board[i][j] != '   '
+      destination = board[i][j]
+      if destination.color != color
+        parse_capture(destination, to, board)
+      elsif destination.color == color
+        false
+      end
+    else
+      true
+    end
+  end
+
+  def parse_capture(from, to, destination, board)
+    x, y = from
+    if board[x - 1][y] != color
+      false
+    else
+      true
+    end
+  end
+
   def check_moves?(to)
     @moves.include?(to)
     p @moves.include?(to)

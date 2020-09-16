@@ -38,7 +38,6 @@ class Game
       set_move
       board.display_board
       turn_switcher
-      system `clear`
     end
   end
 
@@ -52,17 +51,9 @@ class Game
     vet_piece_move?(start_move, end_move)
   end
 
-  # running into some issues with this method.  tackle tomorrow.
-  def validate_turn(piece)
-    return unless player1.color != piece.color
-
-    error.turn_error
-    play_game
-  end
-
   def vet_piece_move?(from, to)
     piece = board.get_active_piece(from)
-    validate_turn(piece)
+    validate_turn(from, piece)
     if valid_piece_move?(from, to, piece)
       board.make_move(from, to)
     else
@@ -71,10 +62,16 @@ class Game
     end
   end
 
+  # def in_check?(from, to, piece)
+
+  # end
+
   def valid_piece_move?(from, to, piece)
     # binding.pry
     case piece.class.name
     when 'Pawn'
+      # pawn is taking pieces directly in front of it when it should only be able to take pieces diagonal
+      p piece.capture_piece(from, to, board.game_board)
       check_if_piece_in_way?(from, to, piece) && piece.starting_moves(from, to) && legal_capture?(current, to, piece) ? true : false
       # binding.pry
     when 'King'
@@ -143,6 +140,14 @@ class Game
   end
 
   private
+
+  def validate_turn(from, piece)
+    x, y = from
+    return unless board.game_board[x][y].is_a?(String) || current_player.color != piece.color
+
+    error.turn_error
+    play_game
+  end
 
   def turn_switcher
     @current_player = @current_player == player1 ? player2 : player1
