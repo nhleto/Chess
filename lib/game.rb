@@ -52,6 +52,7 @@ class Game
   end
 
   def vet_piece_move?(from, to)
+    generate_valid_moves
     piece = board.get_active_piece(from)
     validate_turn(from, piece)
     if valid_piece_move?(from, to, piece)
@@ -62,9 +63,13 @@ class Game
     end
   end
 
-  # def in_check?(from, to, piece)
-
-  # end
+  def generate_valid_moves
+    board.game_board.each do |row|
+      row.each do |cell|
+        p cell.to_s.reject(&:empty?)
+      end
+    end
+  end
 
   def valid_piece_move?(from, to, piece)
     # binding.pry
