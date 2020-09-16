@@ -38,7 +38,6 @@ class Pawn < Piece
     @moves.select! do |cell|
       cell[0].between?(0, 7) && cell[1].between?(0, 7)
     end
-    p moves
     check_moves?(to)
   end
 

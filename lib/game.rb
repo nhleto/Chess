@@ -8,10 +8,11 @@ require 'pry'
 # game class is responsbile for game loop and game logic
 class Game
   Player = Struct.new(:name, :color)
+  include Vector
   attr_reader :board, :player1, :player2, :current_player, :answer, :from, :to, :error, :diag_val, :current
   def initialize
-    @player1 = Player.new('Henry', 'white')
-    @player2 = Player.new('Sarah', 'black')
+    @player1 = Player.new('Henry', :white)
+    @player2 = Player.new('Sarah', :black)
     @board = Board.new
     @error = Error.new
     @current_player = nil
@@ -20,6 +21,7 @@ class Game
     @to = nil
     @diag_val = nil
     @current = current
+    @current_player = player1
   end
 
   # TODO: create set_players and intro_text
@@ -30,13 +32,13 @@ class Game
   end
 
   def play_game
-    attempts = 0
-    while attempts < 3
+    loop do
       board.display_board
-      puts 'Make a move'
+      puts "\n#{current_player.name}, make a move"
       set_move
       board.display_board
-      attempts += 1
+      turn_switcher
+      system `clear`
     end
   end
 
@@ -48,38 +50,44 @@ class Game
     move_to
     end_move = board.input_to_coords(to)
     vet_piece_move?(start_move, end_move)
-    board.move_it(from, to)
   end
 
-  # Have this method return a boolean and eventually chain it together with piece_move_real?
+  # running into some issues with this method.  tackle tomorrow.
+  def validate_turn(piece)
+    return unless player1.color != piece.color
+
+    error.turn_error
+    play_game
+  end
+
   def vet_piece_move?(from, to)
     piece = board.get_active_piece(from)
-    # piece.starting_moves(from, to)
-    # p check_horizontal_same?(from, to, piece) # return true if left / right pieces are the same color
-    # p check_vertical_same?(from, piece) # return true if up / down pieces are the same color
-    # p check_diagonal_same?(from, to, piece) # return false if piece passes through another piece/true if [to] == '   '
-    p valid_piece_move?(from, to, piece)
+    validate_turn(piece)
+    if valid_piece_move?(from, to, piece)
+      board.make_move(from, to)
+    else
+      error.input_error
+      play_game
+    end
   end
 
   def valid_piece_move?(from, to, piece)
     # binding.pry
     case piece.class.name
     when 'Pawn'
-      check_piece_in_way?(from, to, piece) && piece.starting_moves(from, to) && legal_capture?(current, to, piece) ? true : false
+      check_if_piece_in_way?(from, to, piece) && piece.starting_moves(from, to) && legal_capture?(current, to, piece) ? true : false
       # binding.pry
     when 'King'
-      puts 'its a king'
-      check_piece_in_way?(from, to, piece) && piece.starting_moves(from, to) && legal_capture?(current, to, piece) ? true : false
+      check_if_piece_in_way?(from, to, piece) && piece.starting_moves(from, to) && legal_capture?(current, to, piece) ? true : false
     when 'Knight'
       validate_knight?(to, piece) && piece.starting_moves(from, to) ? true : false
     else
-      p piece.class.name
-      check_piece_in_way?(from, to, piece) && piece.starting_moves(from, to) && legal_capture?(current, to, piece) ? true : false
+      check_if_piece_in_way?(from, to, piece) && piece.starting_moves(from, to) && legal_capture?(current, to, piece) ? true : false
     end
   end
 
   # Return true if the piece to the left / right is same color or '   '
-  def check_piece_in_way?(from, to, piece)
+  def check_if_piece_in_way?(from, to, piece)
     x, y = from
     direction_x, direction_y = Vector.create_direction_vector(from, to)
     from_equals_to?(from, to)
@@ -135,6 +143,10 @@ class Game
   end
 
   private
+
+  def turn_switcher
+    @current_player = @current_player == player1 ? player2 : player1
+  end
 
   def reset_diag_val
     @diag_val = nil

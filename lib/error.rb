@@ -17,4 +17,8 @@ class Error
   def bishop_error
     puts "\nThat is not a valid move for a bishop. Please try again..."
   end
+
+  def turn_error
+    puts "\nThat is not your piece. Guess again..."
+  end
 end

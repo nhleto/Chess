@@ -20,12 +20,6 @@ class Board
     @active_piece = active_piece
   end
 
-  def move_it(from, to)
-    from = input_to_coords(from)
-    to = input_to_coords(to)
-    make_move(from, to)
-  end
-
   def get_active_piece(from)
     # from = input_to_coords(from)
     x, y = from
