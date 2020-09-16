@@ -35,10 +35,14 @@ class Pawn < Piece
       @moves << [x + 1, y + 1]
       @moves << [x + 1, y - 1]
     end
-    @moves.select! do |cell|
+    on_board_moves(@moves)
+    check_moves?(to)
+  end
+
+  def on_board_moves(array)
+    array.select! do |cell|
       cell[0].between?(0, 7) && cell[1].between?(0, 7)
     end
-    check_moves?(to)
   end
 
   def capture_piece(from, to, board)
@@ -46,7 +50,7 @@ class Pawn < Piece
     if board[i][j] != '   '
       destination = board[i][j]
       if destination.color != color
-        parse_capture(destination, to, board)
+        parse_capture?(from, to, board)
       elsif destination.color == color
         false
       end
@@ -55,13 +59,29 @@ class Pawn < Piece
     end
   end
 
-  def parse_capture(from, to, destination, board)
+  def parse_capture?(from, to, board)
     x, y = from
-    if board[x - 1][y] != color
+    if board[x - 1][y] != color || board[x + 1][y] != color
       false
     else
       true
     end
+
+    capture_moves(from, to)
+  end
+
+  # if a capture move takes an enemy piece / return true. else , return false
+  def capture_moves(from, to)
+    x, y = from
+    capture_moves = []
+    capture_moves << [x - 1, y + 1]
+    capture_moves << [x - 1, y - 1]
+    capture_moves << [x + 1, y + 1]
+    capture_moves << [x + 1, y - 1]
+
+    on_board_moves(capture_moves)
+
+    capture_moves.include?(to) && to != color ? true : false
   end
 
   def check_moves?(to)

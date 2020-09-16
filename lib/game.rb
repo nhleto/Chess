@@ -70,17 +70,18 @@ class Game
     # binding.pry
     case piece.class.name
     when 'Pawn'
-      # pawn is taking pieces directly in front of it when it should only be able to take pieces diagonal
-      p piece.capture_piece(from, to, board.game_board)
-      check_if_piece_in_way?(from, to, piece) && piece.starting_moves(from, to) && legal_capture?(current, to, piece) ? true : false
-      # binding.pry
+      legal_move?(from, to, piece) && piece.capture_piece(from, to, board.game_board)
     when 'King'
-      check_if_piece_in_way?(from, to, piece) && piece.starting_moves(from, to) && legal_capture?(current, to, piece) ? true : false
+      legal_move?(from, to, piece) ? true : false
     when 'Knight'
       validate_knight?(to, piece) && piece.starting_moves(from, to) ? true : false
     else
-      check_if_piece_in_way?(from, to, piece) && piece.starting_moves(from, to) && legal_capture?(current, to, piece) ? true : false
+      legal_move?(from, to, piece) ? true : false
     end
+  end
+
+  def legal_move?(from, to, piece)
+    check_if_piece_in_way?(from, to, piece) && piece.starting_moves(from, to) && legal_capture?(current, to, piece) ? true : false
   end
 
   # Return true if the piece to the left / right is same color or '   '
