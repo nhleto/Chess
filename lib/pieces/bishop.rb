@@ -23,10 +23,14 @@ class Bishop < Piece
       moves << [x + i, y + i]
       moves << [x - i, y - i]
     end
-    @moves.select! do |cell|
+    on_board_moves
+    check_moves?(moves, to)
+  end
+
+  def on_board_moves(array = @moves)
+    array.select! do |cell|
       cell[0].between?(0, 7) && cell[1].between?(0, 7)
     end
-    check_moves?(moves, to)
   end
 
   def check_moves?(moves, to)

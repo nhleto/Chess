@@ -28,11 +28,15 @@ class Queen < Piece
         [x - i, y + i],
         [x + i, y - i]
       )
-      @moves.select! do |cell|
-        cell[0].between?(0, 8) && cell[1].between?(0, 8)
-      end
     end
+    on_board_moves
     check_moves?(to, moves)
+  end
+
+  def on_board_moves(array = @moves)
+    array.select! do |cell|
+      cell[0].between?(0, 7) && cell[1].between?(0, 7)
+    end
   end
 
   def check_moves?(to, moves)

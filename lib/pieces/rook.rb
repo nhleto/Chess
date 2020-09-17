@@ -23,9 +23,7 @@ class Rook < Piece
       moves << [x, y + i]
       moves << [x, y - i]
     end
-    @moves.select! do |cell|
-      cell[0].between?(0, 8) && cell[1].between?(0, 8)
-    end
+    on_board_moves
     check_moves?(moves, to)
   end
 
@@ -34,9 +32,9 @@ class Rook < Piece
     p moves.include?(to) && on_board?(to)
   end
 
-  # hopfully on_board? can become an integrated way to negate bad values
-  def on_board?(to)
-    x, y = to
-    ((0..7).include?(x) && (0..7).include?(y))
+  def on_board_moves(array = @moves)
+    array.select! do |cell|
+      cell[0].between?(0, 7) && cell[1].between?(0, 7)
+    end
   end
 end

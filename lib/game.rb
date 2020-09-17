@@ -52,9 +52,10 @@ class Game
   end
 
   def vet_piece_move?(from, to)
-    generate_valid_moves
     piece = board.get_active_piece(from)
-    validate_turn(from, piece)
+    # generate_valid_moves
+    # board.make_move(from, to)
+    # validate_turn(from, piece)
     if valid_piece_move?(from, to, piece)
       board.make_move(from, to)
     else
@@ -64,9 +65,15 @@ class Game
   end
 
   def generate_valid_moves
-    board.game_board.each do |row|
-      row.each do |cell|
-        p cell.to_s.reject(&:empty?)
+    board.game_board.each_with_index do |row, x|
+      row.each_with_index do |col, y|
+        piece = board.game_board[x][y]
+        from = x, y
+        # p from
+        if piece != '   ' && piece.color != current_player.color
+          possible_moves = piece.starting_moves(from, to = nil)
+          p possible_moves
+        end
       end
     end
   end
@@ -75,7 +82,9 @@ class Game
     # binding.pry
     case piece.class.name
     when 'Pawn'
-      legal_move?(from, to, piece) && piece.capture_piece(from, to, board.game_board)
+      piece.starting_moves(from, to)
+      legal_move?(from, to, piece) && piece.capture_piece(from, to, board.game_board) ? true : false
+      # binding.pry
     when 'King'
       legal_move?(from, to, piece) ? true : false
     when 'Knight'
@@ -86,7 +95,7 @@ class Game
   end
 
   def legal_move?(from, to, piece)
-    check_if_piece_in_way?(from, to, piece) && piece.starting_moves(from, to) && legal_capture?(current, to, piece) ? true : false
+    check_if_piece_in_way?(from, to, piece) && piece.check_moves?(to) && legal_capture?(current, to, piece) ? true : false
   end
 
   # Return true if the piece to the left / right is same color or '   '

@@ -21,7 +21,7 @@ class Pawn < Piece
     if x == 6 && @color == :white
       @moves << [x - 1, y]
       @moves << [x - 2, y]
-    else
+    elsif @color == :white
       @moves << [x - 1, y]
       @moves << [x - 1, y - 1]
       @moves << [x - 1, y + 1]
@@ -30,16 +30,19 @@ class Pawn < Piece
     if x == 1 && @color == :black
       @moves << [x + 1, y]
       @moves << [x + 2, y]
-    else
+    elsif @color == :black
       @moves << [x + 1, y]
       @moves << [x + 1, y + 1]
       @moves << [x + 1, y - 1]
     end
-    on_board_moves(@moves)
-    check_moves?(to)
+    on_board_moves
   end
 
-  def on_board_moves(array)
+  def check_moves?(to)
+    @moves.include?(to)
+  end
+
+  def on_board_moves(array = @moves)
     array.select! do |cell|
       cell[0].between?(0, 7) && cell[1].between?(0, 7)
     end
@@ -47,6 +50,7 @@ class Pawn < Piece
 
   def capture_piece(from, to, board)
     i, j = to
+    # x, y = from
     if board[i][j] != '   '
       destination = board[i][j]
       if destination.color != color
@@ -54,6 +58,8 @@ class Pawn < Piece
       elsif destination.color == color
         false
       end
+    elsif capture_moves(from, to)
+      false
     else
       true
     end
@@ -82,10 +88,5 @@ class Pawn < Piece
     on_board_moves(capture_moves)
 
     capture_moves.include?(to) && to != color ? true : false
-  end
-
-  def check_moves?(to)
-    @moves.include?(to)
-    p @moves.include?(to)
   end
 end

@@ -25,10 +25,14 @@ class King < Piece
     moves << [x - 1, y + 1]
     moves << [x + 1, y + 1]
     moves << [x - 1, y - 1]
-    @moves.select! do |cell|
+    on_board_moves
+    check_moves?(to, moves)
+  end
+
+  def on_board_moves(array = @moves)
+    array.select! do |cell|
       cell[0].between?(0, 7) && cell[1].between?(0, 7)
     end
-    check_moves?(to, moves)
   end
 
   def check_moves?(to, moves)
