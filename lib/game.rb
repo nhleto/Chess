@@ -53,7 +53,7 @@ class Game
 
   def vet_piece_move?(from, to)
     piece = board.get_active_piece(from)
-    # generate_valid_moves
+    generate_valid_moves
     # board.make_move(from, to)
     # validate_turn(from, piece)
     if valid_piece_move?(from, to, piece)
@@ -66,25 +66,47 @@ class Game
 
   def generate_valid_moves
     board.game_board.each_with_index do |row, x|
-      row.each_with_index do |col, y|
+      row.each_with_index do |_col, y|
         piece = board.game_board[x][y]
         from = x, y
-        # p from
-        if piece != '   ' && piece.color != current_player.color
-          possible_moves = piece.starting_moves(from, to = nil)
-          p possible_moves
-        end
+        next unless piece != '   ' && piece.color != current_player.color
+
+        possible_moves = piece.starting_moves(from, to = nil)
+
+        player_king_pos = king_position
+        possible_check_moves = check_king(player_king_pos, possible_moves)
       end
     end
   end
 
+  def check_king(king_pos, possible_moves)
+    # p king_pos, possible_moves
+    moves = []
+    p possible_moves
+    # possible_moves.each do |pos|
+    #   if pos == king_pos
+    #     moves << pos
+    #   end
+    # end
+    # moves
+  end
+
+  def king_position
+    pos = ''
+    board.game_board.each_with_index do |row, x|
+      row.each_with_index do |_col, y|
+        piece = board.game_board[x][y]
+        pos = [x, y] if piece != '   ' && piece.class.name == 'King' && piece.color == current_player.color
+      end
+    end
+    pos
+  end
+
   def valid_piece_move?(from, to, piece)
-    # binding.pry
+    piece.starting_moves(from, to)
     case piece.class.name
     when 'Pawn'
-      piece.starting_moves(from, to)
       legal_move?(from, to, piece) && piece.capture_piece(from, to, board.game_board) ? true : false
-      # binding.pry
     when 'King'
       legal_move?(from, to, piece) ? true : false
     when 'Knight'

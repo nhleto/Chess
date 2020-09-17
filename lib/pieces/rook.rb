@@ -24,12 +24,10 @@ class Rook < Piece
       moves << [x, y - i]
     end
     on_board_moves
-    check_moves?(moves, to)
   end
 
-  def check_moves?(moves, to)
-    moves.include?(to) && on_board?(to)
-    p moves.include?(to) && on_board?(to)
+  def check_moves?(to)
+    @moves.include?(to)
   end
 
   def on_board_moves(array = @moves)

@@ -15,7 +15,7 @@ class Pawn < Piece
     @color == :white ? " \u2659 " : " \u265F ".white
   end
 
-  def starting_moves(from, to)
+  def starting_moves(from, _to)
     x, y = from
     @moves = []
     if x == 6 && @color == :white
@@ -50,7 +50,6 @@ class Pawn < Piece
 
   def capture_piece(from, to, board)
     i, j = to
-    # x, y = from
     if board[i][j] != '   '
       destination = board[i][j]
       if destination.color != color
@@ -72,7 +71,6 @@ class Pawn < Piece
     else
       true
     end
-
     capture_moves(from, to)
   end
 

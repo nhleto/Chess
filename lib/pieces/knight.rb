@@ -28,7 +28,6 @@ class Knight < Piece
       [x - 1, y - 2]
     )
     on_board_moves
-    check_moves?(moves, to)
   end
 
   def on_board_moves(array = @moves)
@@ -37,8 +36,7 @@ class Knight < Piece
     end
   end
 
-  def check_moves?(moves, to)
-    moves.include?(to)
-    p moves.include?(to)
+  def check_moves?(to)
+    @moves.include?(to)
   end
 end

@@ -26,7 +26,6 @@ class King < Piece
     moves << [x + 1, y + 1]
     moves << [x - 1, y - 1]
     on_board_moves
-    check_moves?(to, moves)
   end
 
   def on_board_moves(array = @moves)
@@ -35,8 +34,7 @@ class King < Piece
     end
   end
 
-  def check_moves?(to, moves)
-    moves.include?(to)
-    p moves.include?(to)
+  def check_moves?(moves)
+    @moves.include?(to)
   end
 end

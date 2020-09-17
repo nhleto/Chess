@@ -30,7 +30,6 @@ class Queen < Piece
       )
     end
     on_board_moves
-    check_moves?(to, moves)
   end
 
   def on_board_moves(array = @moves)
@@ -39,7 +38,7 @@ class Queen < Piece
     end
   end
 
-  def check_moves?(to, moves)
-    moves.uniq.include?(to)
+  def check_moves?(to)
+    @moves.uniq.include?(to)
   end
 end
