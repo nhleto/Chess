@@ -9,7 +9,7 @@ require 'pry'
 class Game
   Player = Struct.new(:name, :color)
   include Vector
-  attr_reader :board, :player1, :player2, :current_player, :answer, :from, :to, :error, :diag_val, :current
+  attr_reader :board, :player1, :player2, :current_player, :answer, :from, :to, :error, :diag_val, :current, :pawn_moves
   def initialize
     @player1 = Player.new('Henry', :white)
     @player2 = Player.new('Sarah', :black)
@@ -22,6 +22,7 @@ class Game
     @diag_val = nil
     @current = current
     @current_player = player1
+    @pawn_moves = pawn_moves
   end
 
   # TODO: create set_players and intro_text
@@ -53,6 +54,7 @@ class Game
 
   def vet_piece_move?(from, to)
     piece = board.get_active_piece(from)
+    generate_valid_pawn_moves
     generate_valid_moves
     # board.make_move(from, to)
     # validate_turn(from, piece)
@@ -64,31 +66,52 @@ class Game
     end
   end
 
-  def generate_valid_moves
+  def generate_valid_pawn_moves
     board.game_board.each_with_index do |row, x|
       row.each_with_index do |_col, y|
         piece = board.game_board[x][y]
         from = x, y
-        next unless piece != '   ' && piece.color != current_player.color
+        next unless piece != '   ' && piece.color != current_player.color && piece.class.name == 'Pawn'
+
+        @pawn_moves = piece.all_pawn_moves(from)
+      end
+    end
+  end
+
+  def generate_valid_moves
+    p @pawn_moves
+    board.game_board.each_with_index do |row, x|
+      row.each_with_index do |_col, y|
+        piece = board.game_board[x][y]
+        from = x, y
+
+        next unless piece != '   ' && piece.color != current_player.color && piece.class.name != 'Pawn'
 
         possible_moves = piece.starting_moves(from, to = nil)
+        # possible_moves += @pawn_moves
 
         player_king_pos = king_position
         possible_check_moves = check_king(player_king_pos, possible_moves)
+        
+        while !possible_check_moves.empty?
+          to = possible_check_moves.first
+          return true if valid_piece_move?(from, to, piece)
+          possible_check_moves.shift
+        end
       end
     end
+    false
   end
 
   def check_king(king_pos, possible_moves)
     # p king_pos, possible_moves
     moves = []
+    # binding.pry
     p possible_moves
-    # possible_moves.each do |pos|
-    #   if pos == king_pos
-    #     moves << pos
-    #   end
-    # end
-    # moves
+    possible_moves.each do |pos|
+      moves << pos if pos == king_pos
+    end
+    moves
   end
 
   def king_position

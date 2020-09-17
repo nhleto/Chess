@@ -5,37 +5,64 @@ require_relative './piece.rb'
 
 # pawn clas
 class Pawn < Piece
-  attr_reader :symbol, :color
+  attr_reader :symbol, :color, :moved
   def initialize(color)
     @symbol = piece
     @color = color
+    @moved = false
   end
 
   def piece
-    @color == :white ? " \u2659 " : " \u265F ".white
+    @color == :white ? " \u2659 " : " \u265F "
   end
 
   def starting_moves(from, _to)
     x, y = from
     @moves = []
-    if x == 6 && @color == :white
-      @moves << [x - 1, y]
-      @moves << [x - 2, y]
-    elsif @color == :white
-      @moves << [x - 1, y]
-      @moves << [x - 1, y - 1]
-      @moves << [x - 1, y + 1]
-    end
 
-    if x == 1 && @color == :black
-      @moves << [x + 1, y]
-      @moves << [x + 2, y]
-    elsif @color == :black
-      @moves << [x + 1, y]
-      @moves << [x + 1, y + 1]
-      @moves << [x + 1, y - 1]
+    if x == 6 && @moved == false
+      moves << [x - 1, y]
+      moves << [x - 2, y]
+    elsif x == 1 && @moved == false
+      moves << [x + 1, y]
+      moves << [x + 2, y]
+    elsif @color == :white && @moved == true
+      moves << [x - 1, y]
+      moves << [x - 1, y + 1]
+      moves << [x - 1, y - 1]
+    elsif @color == :black && @moved == true
+      moves << [x + 1, y]
+      moves << [x + 1, y + 1]
+      moves << [x + 1, y - 1]
     end
+    check_if_moved(from)
     on_board_moves
+  end
+
+  def all_pawn_moves(from)
+    x, y = from
+    moves = []
+    moves << [x - 1, y]
+    moves << [x - 2, y]
+    moves << [x + 1, y]
+    moves << [x + 2, y]
+    moves << [x - 1, y]
+    moves << [x - 1, y + 1]
+    moves << [x - 1, y - 1]
+    moves << [x + 1, y]
+    moves << [x + 1, y + 1]
+    moves << [x + 1, y - 1]
+    on_board_moves(moves)
+    moves.uniq!
+  end
+
+  def check_if_moved(from)
+    x, y = from
+    if @color == :white && x != 6
+      @moved = true
+    elsif @color == :black && x != 1
+      @moved = true
+    end
   end
 
   def check_moves?(to)
