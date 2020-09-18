@@ -35,6 +35,7 @@ class Game
   def play_game
     loop do
       board.display_board
+      check? ? in_check : false
       puts "\n#{current_player.name}, make a move"
       set_move
       turn_switcher
@@ -48,15 +49,15 @@ class Game
     puts 'And where are you moving the piece to?'
     move_to
     end_move = board.input_to_coords(to)
-    p check?
     vet_piece_move?(start_move, end_move)
   end
 
   def vet_piece_move?(from, to)
     piece = board.get_active_piece(from)
     validate_turn(from, piece)
-    generate_valid_pawn_moves
+    puts(still_in_check?(from, to) ? 'Good job, you are still in check lol'.red : false)
     board.make_move(from, to)
+
     # if valid_piece_move?(from, to, piece)
     #   board.make_move(from, to)
     # else
@@ -65,20 +66,54 @@ class Game
     # end
   end
 
-  def generate_valid_pawn_moves
+  def still_in_check?(from, to)
+    x, y = from
+    piece = board.game_board[x][y]
+    player_king_pos = friendly_king_pos
+    piece&.starting_moves(from, to = nil)
+    possible_moves = piece.moves
+    possible_check_moves = check_king(player_king_pos, possible_moves)
+    puts "#{player_king_pos} is the player's king position"
+    # binding.pry
+    until possible_check_moves.empty?
+      puts 'we are still in check'.cyan
+      return true if valid_piece_move?(from, to, piece)
+    end
+  end
+
+  def in_check
+    puts error.check_error(current_player) if check?
+  end
+
+  def check?
+    double_check? || pawn_check? ? true : false
+    # binding.pry
+  end
+
+  def pawn_check?
     board.game_board.each_with_index do |row, x|
       row.each_with_index do |_col, y|
         piece = board.game_board[x][y]
         from = x, y
         next unless piece != '   ' && piece.color != current_player.color && piece.class.name == 'Pawn'
 
-        @pawn_moves = piece.all_pawn_moves(from)
+        pawn_moves = piece.all_pawn_moves(from)
+        player_king_pos = king_position
+        possible_pawn_check_moves = check_king(player_king_pos, pawn_moves)
+        until possible_pawn_check_moves.empty?
+          to = possible_pawn_check_moves.first
+          valid_piece_move?(from, to, piece)
+          return true if valid_piece_move?(from, to, piece)
+
+          # binding.pry
+          possible_pawn_check_moves.shift
+        end
       end
     end
+    false
   end
 
-  def check?
-    p @pawn_moves
+  def double_check?
     board.game_board.each_with_index do |row, x|
       row.each_with_index do |_col, y|
         piece = board.game_board[x][y]
@@ -89,16 +124,13 @@ class Game
         next unless piece != '   ' && piece.color != current_player.color && piece.class.name != 'Pawn'
 
         possible_moves = piece.moves
-        p piece
         player_king_pos = king_position
-        p possible_check_moves = check_king(player_king_pos, possible_moves)
-
-        while !possible_check_moves.empty?
-          puts "\n#{current_player.name}'s King is in check"
+        possible_check_moves = check_king(player_king_pos, possible_moves)
+        # binding.pry
+        until possible_check_moves.empty?
           to = possible_check_moves.first
           return true if valid_piece_move?(from, to, piece)
 
-          binding.pry
           possible_check_moves.shift
         end
       end
@@ -107,10 +139,8 @@ class Game
   end
 
   def check_king(king_pos, possible_moves)
-    # binding.pry
     moves = []
-    # binding.pry
-    p possible_moves
+    # p possible_moves
     possible_moves.each do |pos|
       moves << pos if pos == king_pos
     end
@@ -118,6 +148,17 @@ class Game
   end
 
   def king_position
+    pos = ''
+    board.game_board.each_with_index do |row, x|
+      row.each_with_index do |_col, y|
+        piece = board.game_board[x][y]
+        pos = [x, y] if piece != '   ' && piece.class.name == 'King' && piece.color == current_player.color
+      end
+    end
+    pos
+  end
+
+  def friendly_king_pos
     pos = ''
     board.game_board.each_with_index do |row, x|
       row.each_with_index do |_col, y|

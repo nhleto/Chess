@@ -16,11 +16,11 @@ class Error
     puts "\nYou did not select a valid piece".red
   end
 
-  def bishop_error
-    puts "\nThat is not a valid move for a bishop. Please try again...".red
-  end
-
   def turn_error
     puts "\nThat is not your piece. Guess again...".red
+  end
+
+  def check_error(current_player)
+    puts "\n#{current_player.name}, you are in check. You must move your King out of check unless it is checkmate...".yellow
   end
 end
