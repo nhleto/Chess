@@ -48,21 +48,21 @@ class Game
     puts 'And where are you moving the piece to?'
     move_to
     end_move = board.input_to_coords(to)
+    p check?
     vet_piece_move?(start_move, end_move)
   end
 
   def vet_piece_move?(from, to)
     piece = board.get_active_piece(from)
+    validate_turn(from, piece)
     generate_valid_pawn_moves
-    p check?
-    # board.make_move(from, to)
-    # validate_turn(from, piece)
-    if valid_piece_move?(from, to, piece)
-      board.make_move(from, to)
-    else
-      error.input_error
-      play_game
-    end
+    board.make_move(from, to)
+    # if valid_piece_move?(from, to, piece)
+    #   board.make_move(from, to)
+    # else
+    #   error.input_error
+    #   play_game
+    # end
   end
 
   def generate_valid_pawn_moves
@@ -86,20 +86,19 @@ class Game
         next unless piece != '   ' && piece.color != current_player.color && piece.class.name != 'Pawn'
 
         piece&.starting_moves(from, to = nil)
-
         next unless piece != '   ' && piece.color != current_player.color && piece.class.name != 'Pawn'
 
         possible_moves = piece.moves
-
-        p "The #{piece}'s moves are #{piece.moves}"
-
+        p piece
         player_king_pos = king_position
-        possible_check_moves = check_king(player_king_pos, possible_moves)
+        p possible_check_moves = check_king(player_king_pos, possible_moves)
 
-        until possible_check_moves.empty?
+        while !possible_check_moves.empty?
+          puts "\n#{current_player.name}'s King is in check"
           to = possible_check_moves.first
           return true if valid_piece_move?(from, to, piece)
 
+          binding.pry
           possible_check_moves.shift
         end
       end
@@ -137,7 +136,7 @@ class Game
     when 'King'
       legal_move?(from, to, piece) ? true : false
     when 'Knight'
-      validate_knight?(to, piece) && piece.starting_moves(from, to) ? true : false
+      validate_knight?(to, piece) && piece.check_moves?(to) ? true : false
     else
       legal_move?(from, to, piece) ? true : false
     end
@@ -147,7 +146,7 @@ class Game
     check_if_piece_in_way?(from, to, piece) && piece.check_moves?(to) && legal_capture?(current, to, piece) ? true : false
   end
 
-  # Return true if the piece to the left / right is same color or '   '
+  # Return false if there is a piece in the way
   def check_if_piece_in_way?(from, to, piece)
     x, y = from
     direction_x, direction_y = Vector.create_direction_vector(from, to)
