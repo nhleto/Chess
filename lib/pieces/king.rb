@@ -11,7 +11,7 @@ class King < Piece
   end
 
   def piece
-    @color == :white ? " \u2654 ".white : " \u265A ".black
+    @color == :white ? ' K ' : " K ".black
   end
 
   def starting_moves(from, to)
@@ -34,7 +34,7 @@ class King < Piece
     end
   end
 
-  def check_moves?(moves)
+  def check_moves?
     @moves.include?(to)
   end
 end

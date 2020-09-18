@@ -37,7 +37,6 @@ class Game
       board.display_board
       puts "\n#{current_player.name}, make a move"
       set_move
-      board.display_board
       turn_switcher
     end
   end
@@ -55,7 +54,7 @@ class Game
   def vet_piece_move?(from, to)
     piece = board.get_active_piece(from)
     generate_valid_pawn_moves
-    generate_valid_moves
+    p check?
     # board.make_move(from, to)
     # validate_turn(from, piece)
     if valid_piece_move?(from, to, piece)
@@ -78,24 +77,29 @@ class Game
     end
   end
 
-  def generate_valid_moves
+  def check?
     p @pawn_moves
     board.game_board.each_with_index do |row, x|
       row.each_with_index do |_col, y|
         piece = board.game_board[x][y]
         from = x, y
+        next unless piece != '   ' && piece.color != current_player.color && piece.class.name != 'Pawn'
+
+        piece&.starting_moves(from, to = nil)
 
         next unless piece != '   ' && piece.color != current_player.color && piece.class.name != 'Pawn'
 
-        possible_moves = piece.starting_moves(from, to = nil)
-        # possible_moves += @pawn_moves
+        possible_moves = piece.moves
+
+        p "The #{piece}'s moves are #{piece.moves}"
 
         player_king_pos = king_position
         possible_check_moves = check_king(player_king_pos, possible_moves)
-        
-        while !possible_check_moves.empty?
+
+        until possible_check_moves.empty?
           to = possible_check_moves.first
           return true if valid_piece_move?(from, to, piece)
+
           possible_check_moves.shift
         end
       end
@@ -104,7 +108,7 @@ class Game
   end
 
   def check_king(king_pos, possible_moves)
-    # p king_pos, possible_moves
+    # binding.pry
     moves = []
     # binding.pry
     p possible_moves
