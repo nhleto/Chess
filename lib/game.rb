@@ -9,7 +9,7 @@ require 'pry'
 class Game
   Player = Struct.new(:name, :color)
   include Vector
-  attr_reader :board, :player1, :player2, :current_player, :answer, :from, :to, :error, :diag_val, :current, :pawn_moves
+  attr_reader :board, :player1, :player2, :current_player, :answer, :from, :to, :error, :diag_val, :current
   def initialize
     @player1 = Player.new('Henry', :white)
     @player2 = Player.new('Sarah', :black)
@@ -22,7 +22,6 @@ class Game
     @diag_val = nil
     @current = current
     @current_player = player1
-    @pawn_moves = pawn_moves
   end
 
   # TODO: create set_players and intro_text
@@ -52,34 +51,17 @@ class Game
     vet_piece_move?(start_move, end_move)
   end
 
-  # take where the piece was moved from and put it back there. to = from, from = to
-
   def vet_piece_move?(from, to)
     piece = board.get_active_piece(from)
     validate_turn(from, piece)
-    if valid_piece_move?(from, to, piece)
-      board.make_move(from, to)
-      still_in_check(from, to)
-    else
-      error.input_error
-      play_game
-    end
+    valid_piece_move?(from, to, piece)
+    board.make_move(from, to)
+    # valid_piece_move?(from, to, piece) ? validate_move_true(from, to) : valid_move_false(from, to)
   end
 
-  def still_in_check(from, to)
-    return unless check?
+  # if there are not other possible moves for checked king, return true and end game
+  def check_mate?
 
-    in_check
-    board.make_move(to, from)
-    play_game
-  end
-
-  def in_check
-    puts error.check_error(current_player) if check?
-  end
-
-  def check?
-    double_check? || pawn_check? ? true : false
   end
 
   def pawn_check?
@@ -97,7 +79,6 @@ class Game
           valid_piece_move?(from, to, piece)
           return true if valid_piece_move?(from, to, piece)
 
-          # binding.pry
           possible_pawn_check_moves.shift
         end
       end
@@ -112,13 +93,12 @@ class Game
         from = x, y
         next unless piece != '   ' && piece.color != current_player.color && piece.class.name != 'Pawn'
 
-        piece&.starting_moves(from, to = nil)
+        piece&.starting_moves(from, _to = nil)
         next unless piece != '   ' && piece.color != current_player.color && piece.class.name != 'Pawn'
 
         possible_moves = piece.moves
         player_king_pos = king_position
         possible_check_moves = check_king(player_king_pos, possible_moves)
-        # binding.pry
         until possible_check_moves.empty?
           to = possible_check_moves.first
           return true if valid_piece_move?(from, to, piece)
@@ -155,7 +135,7 @@ class Game
     piece.starting_moves(from, to)
     case piece.class.name
     when 'Pawn'
-      legal_move?(from, to, piece) && piece.capture_piece(from, to, board.game_board) ? true : false
+      legal_move?(from, to, piece) && piece.capture_piece(from, to, board.game_board) && !check? ? true : false
     when 'King'
       legal_move?(from, to, piece) ? true : false
     when 'Knight'
@@ -226,6 +206,32 @@ class Game
   end
 
   private
+
+  def in_check
+    puts error.check_error(current_player) if check?
+  end
+
+  def check?
+    double_check? || pawn_check? ? true : false
+  end
+
+  def still_in_check(from, to)
+    return unless check?
+
+    in_check
+    board.make_move(to, from)
+    play_game
+  end
+
+  def validate_move_true(from, to)
+    board.make_move(from, to)
+    still_in_check(from, to)
+  end
+
+  def valid_move_false(from, to)
+    error.input_error
+    play_game
+  end
 
   def validate_turn(from, piece)
     x, y = from
