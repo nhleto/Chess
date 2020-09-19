@@ -13,7 +13,7 @@ class Pawn < Piece
   end
 
   def piece
-    @color == :white ? " P " : " \u265F "
+    @color == :white ? ' P ' : " \u265F "
   end
 
   def starting_moves(from, _to)

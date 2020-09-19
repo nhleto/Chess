@@ -21,6 +21,10 @@ class Error
   end
 
   def check_error(current_player)
-    puts "\n#{current_player.name}, you are in check. You must move your King out of check unless it is checkmate...".yellow
+    puts "\n#{current_player.name}, you are in check. You must move your King out of check unless it is in checkmate...".yellow
+  end
+
+  def not_in_check(current_player)
+    puts "\n#{current_player.name}, you are not in check anymore.".green
   end
 end

@@ -52,11 +52,13 @@ class Game
     vet_piece_move?(start_move, end_move)
   end
 
+  # take where the piece was moved from and put it back there. to = from, from = to
+
   def vet_piece_move?(from, to)
     piece = board.get_active_piece(from)
     validate_turn(from, piece)
-    puts(still_in_check?(from, to) ? 'Good job, you are still in check lol'.red : false)
     board.make_move(from, to)
+    still_in_check(from, to)
 
     # if valid_piece_move?(from, to, piece)
     #   board.make_move(from, to)
@@ -66,19 +68,12 @@ class Game
     # end
   end
 
-  def still_in_check?(from, to)
-    x, y = from
-    piece = board.game_board[x][y]
-    player_king_pos = friendly_king_pos
-    piece&.starting_moves(from, to = nil)
-    possible_moves = piece.moves
-    possible_check_moves = check_king(player_king_pos, possible_moves)
-    puts "#{player_king_pos} is the player's king position"
-    # binding.pry
-    until possible_check_moves.empty?
-      puts 'we are still in check'.cyan
-      return true if valid_piece_move?(from, to, piece)
-    end
+  def still_in_check(from, to)
+    return unless check?
+
+    in_check
+    board.make_move(to, from)
+    play_game
   end
 
   def in_check
@@ -148,17 +143,6 @@ class Game
   end
 
   def king_position
-    pos = ''
-    board.game_board.each_with_index do |row, x|
-      row.each_with_index do |_col, y|
-        piece = board.game_board[x][y]
-        pos = [x, y] if piece != '   ' && piece.class.name == 'King' && piece.color == current_player.color
-      end
-    end
-    pos
-  end
-
-  def friendly_king_pos
     pos = ''
     board.game_board.each_with_index do |row, x|
       row.each_with_index do |_col, y|
