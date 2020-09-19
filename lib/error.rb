@@ -27,4 +27,8 @@ class Error
   def not_in_check(current_player)
     puts "\n#{current_player.name}, you are not in check anymore.".green
   end
+
+  def bad_check_move(current_player)
+    puts "\n#{current_player.name}, that move puts you in check. You cannot move there...".yellow
+  end
 end

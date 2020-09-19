@@ -34,7 +34,7 @@ class Game
   def play_game
     loop do
       board.display_board
-      check? ? in_check : false
+      check? ? in_check(current_player) : false
       puts "\n#{current_player.name}, make a move"
       set_move
       turn_switcher
@@ -54,88 +54,28 @@ class Game
   def vet_piece_move?(from, to)
     piece = board.get_active_piece(from)
     validate_turn(from, piece)
-    valid_piece_move?(from, to, piece)
-    board.make_move(from, to)
-    # valid_piece_move?(from, to, piece) ? validate_move_true(from, to) : valid_move_false(from, to)
+    valid_piece_move?(from, to, piece) ? board.make_move(from, to) : valid_move_false(from, to)
+    puts_king_in_check?(from, to)
+    validate_move_true(from, to)
   end
 
-  # if there are not other possible moves for checked king, return true and end game
-  def check_mate?
-
-  end
-
-  def pawn_check?
-    board.game_board.each_with_index do |row, x|
-      row.each_with_index do |_col, y|
-        piece = board.game_board[x][y]
-        from = x, y
-        next unless piece != '   ' && piece.color != current_player.color && piece.class.name == 'Pawn'
-
-        pawn_moves = piece.all_pawn_moves(from)
-        player_king_pos = king_position
-        possible_pawn_check_moves = check_king(player_king_pos, pawn_moves)
-        until possible_pawn_check_moves.empty?
-          to = possible_pawn_check_moves.first
-          valid_piece_move?(from, to, piece)
-          return true if valid_piece_move?(from, to, piece)
-
-          possible_pawn_check_moves.shift
-        end
-      end
+  # ensures that subsequent move does not put king in check
+  def puts_king_in_check?(from, to)
+    # board.make_move(from, to)
+    if check?
+      error.bad_check_move(current_player)
+      board.make_move(to, from)
+      play_game
+    else
+      true
     end
-    false
-  end
-
-  def double_check?
-    board.game_board.each_with_index do |row, x|
-      row.each_with_index do |_col, y|
-        piece = board.game_board[x][y]
-        from = x, y
-        next unless piece != '   ' && piece.color != current_player.color && piece.class.name != 'Pawn'
-
-        piece&.starting_moves(from, _to = nil)
-        next unless piece != '   ' && piece.color != current_player.color && piece.class.name != 'Pawn'
-
-        possible_moves = piece.moves
-        player_king_pos = king_position
-        possible_check_moves = check_king(player_king_pos, possible_moves)
-        until possible_check_moves.empty?
-          to = possible_check_moves.first
-          return true if valid_piece_move?(from, to, piece)
-
-          possible_check_moves.shift
-        end
-      end
-    end
-    false
-  end
-
-  def check_king(king_pos, possible_moves)
-    moves = []
-    # p possible_moves
-    possible_moves.each do |pos|
-      moves << pos if pos == king_pos
-    end
-    moves
-  end
-
-  def king_position
-    pos = ''
-    board.game_board.each_with_index do |row, x|
-      row.each_with_index do |_col, y|
-        piece = board.game_board[x][y]
-        pos = [x, y] if piece != '   ' && piece.class.name == 'King' && piece.color == current_player.color
-      end
-    end
-    pos
   end
 
   def valid_piece_move?(from, to, piece)
-    # puts "check is #{check?}"
     piece.starting_moves(from, to)
     case piece.class.name
     when 'Pawn'
-      legal_move?(from, to, piece) && piece.capture_piece(from, to, board.game_board) && !check? ? true : false
+      legal_move?(from, to, piece) && piece.capture_piece(from, to, board.game_board) ? true : false
     when 'King'
       legal_move?(from, to, piece) ? true : false
     when 'Knight'
@@ -149,7 +89,6 @@ class Game
     check_if_piece_in_way?(from, to, piece) && piece.check_moves?(to) && legal_capture?(current, to, piece) ? true : false
   end
 
-  # Return false if there is a piece in the way
   def check_if_piece_in_way?(from, to, piece)
     x, y = from
     direction_x, direction_y = Vector.create_direction_vector(from, to)
@@ -207,8 +146,74 @@ class Game
 
   private
 
-  def in_check
-    puts error.check_error(current_player) if check?
+  def check_king(king_pos, possible_moves)
+    moves = []
+    # p possible_moves
+    possible_moves.each do |pos|
+      moves << pos if pos == king_pos
+    end
+    moves
+  end
+
+  def king_position
+    pos = ''
+    board.game_board.each_with_index do |row, x|
+      row.each_with_index do |_col, y|
+        piece = board.game_board[x][y]
+        pos = [x, y] if piece != '   ' && piece.class.name == 'King' && piece.color == current_player.color
+      end
+    end
+    pos
+  end
+
+  def pawn_check?
+    board.game_board.each_with_index do |row, x|
+      row.each_with_index do |_col, y|
+        piece = board.game_board[x][y]
+        from = x, y
+        next unless piece != '   ' && piece.color != current_player.color && piece.class.name == 'Pawn'
+
+        pawn_moves = piece.all_pawn_moves(from)
+        player_king_pos = king_position
+        possible_pawn_check_moves = check_king(player_king_pos, pawn_moves)
+        until possible_pawn_check_moves.empty?
+          to = possible_pawn_check_moves.first
+          valid_piece_move?(from, to, piece)
+          return true if valid_piece_move?(from, to, piece)
+
+          possible_pawn_check_moves.shift
+        end
+      end
+    end
+    false
+  end
+
+  def double_check?
+    board.game_board.each_with_index do |row, x|
+      row.each_with_index do |_col, y|
+        piece = board.game_board[x][y]
+        from = x, y
+        next unless piece != '   ' && piece.color != current_player.color && piece.class.name != 'Pawn'
+
+        piece&.starting_moves(from, _to = nil)
+        next unless piece != '   ' && piece.color != current_player.color && piece.class.name != 'Pawn'
+
+        possible_moves = piece.moves
+        player_king_pos = king_position
+        possible_check_moves = check_king(player_king_pos, possible_moves)
+        until possible_check_moves.empty?
+          to = possible_check_moves.first
+          return true if valid_piece_move?(from, to, piece)
+
+          possible_check_moves.shift
+        end
+      end
+    end
+    false
+  end
+
+  def in_check(current_player)
+    error.check_error(current_player)
   end
 
   def check?
@@ -218,17 +223,17 @@ class Game
   def still_in_check(from, to)
     return unless check?
 
-    in_check
+    in_check(current_player)
     board.make_move(to, from)
     play_game
   end
 
   def validate_move_true(from, to)
-    board.make_move(from, to)
+    # board.make_move(from, to)
     still_in_check(from, to)
   end
 
-  def valid_move_false(from, to)
+  def valid_move_false(_from, _to)
     error.input_error
     play_game
   end
