@@ -23,9 +23,13 @@ class Pawn < Piece
     if x == 6 && @moved == false
       moves << [x - 1, y]
       moves << [x - 2, y]
+      moves << [x - 1, y + 1]
+      moves << [x - 1, y - 1]
     elsif x == 1 && @moved == false
       moves << [x + 1, y]
       moves << [x + 2, y]
+      moves << [x + 1, y + 1]
+      moves << [x + 1, y - 1]
     elsif @color == :white && @moved == true
       moves << [x - 1, y]
       moves << [x - 1, y + 1]

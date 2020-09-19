@@ -57,15 +57,13 @@ class Game
   def vet_piece_move?(from, to)
     piece = board.get_active_piece(from)
     validate_turn(from, piece)
-    board.make_move(from, to)
-    still_in_check(from, to)
-
-    # if valid_piece_move?(from, to, piece)
-    #   board.make_move(from, to)
-    # else
-    #   error.input_error
-    #   play_game
-    # end
+    if valid_piece_move?(from, to, piece)
+      board.make_move(from, to)
+      still_in_check(from, to)
+    else
+      error.input_error
+      play_game
+    end
   end
 
   def still_in_check(from, to)
@@ -82,7 +80,6 @@ class Game
 
   def check?
     double_check? || pawn_check? ? true : false
-    # binding.pry
   end
 
   def pawn_check?
@@ -154,6 +151,7 @@ class Game
   end
 
   def valid_piece_move?(from, to, piece)
+    # puts "check is #{check?}"
     piece.starting_moves(from, to)
     case piece.class.name
     when 'Pawn'
