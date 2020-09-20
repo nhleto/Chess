@@ -34,7 +34,7 @@ class King < Piece
     end
   end
 
-  def check_moves?
+  def check_moves?(to)
     @moves.include?(to)
   end
 end
