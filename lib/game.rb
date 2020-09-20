@@ -61,22 +61,22 @@ class Game
     validate_move_true(from, to)
   end
 
-  def pawn_checkmate?(check_moves)
-    check_moves = check_moves.flatten
-    board.game_board.each_with_index do |row, x|
-      row.each_with_index do |_col, y|
-        piece = board.game_board[x][y]
-        from = x, y
-        next unless piece != '   ' && piece.color == current_player.color && piece.class.name == 'Pawn'
+  # def pawn_checkmate?(check_moves)
+  #   check_moves = check_moves.flatten
+  #   board.game_board.each_with_index do |row, x|
+  #     row.each_with_index do |_col, y|
+  #       piece = board.game_board[x][y]
+  #       from = x, y
+  #       next unless piece != '   ' && piece.color == current_player.color && piece.class.name == 'Pawn'
 
-        pawn_moves = piece.all_pawn_moves(from)
+  #       pawn_moves = piece.all_pawn_moves(from)
 
-        if pawn_moves.include?(check_moves) && valid_piece_move?(from, check_moves, piece)
-          puts 'a pawn can stop check'
-        end
-      end
-    end
-  end
+  #       if pawn_moves.include?(check_moves) && valid_piece_move?(from, check_moves, piece)
+  #         puts 'a pawn can stop check'
+  #       end
+  #     end
+  #   end
+  # end
 
   # take the moves generated from check
   def checkmate?(check_moves)
