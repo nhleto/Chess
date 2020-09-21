@@ -9,7 +9,7 @@ require 'pry'
 class Game
   Player = Struct.new(:name, :color)
   include Vector
-  attr_reader :board, :player1, :player2, :current_player, :answer, :from, :to, :error, :diag_val, :current
+  attr_reader :board, :player1, :player2, :current_player, :answer, :from, :to, :error, :diag_val, :current, :mate
   def initialize
     @player1 = Player.new('Henry', :white)
     @player2 = Player.new('Sarah', :black)
@@ -22,6 +22,7 @@ class Game
     @diag_val = nil
     @current = current
     @current_player = player1
+    @mate = nil
   end
 
   # TODO: create set_players and intro_text
@@ -58,7 +59,9 @@ class Game
     # valid_piece_move?(from, to, piece) ? board.make_move(from, to) : valid_move_false(from, to)
     board.make_move(from, to)
     puts_king_in_check?(from, to)
-    validate_move_true(from, to)
+    still_in_check(from, to)
+
+    # mate?
   end
 
   # def pawn_checkmate?(check_moves)
@@ -79,20 +82,58 @@ class Game
   # end
 
   # take the moves generated from check
-  def checkmate?(check_moves)
-    check_moves = check_moves.flatten
+  def checkmate?(piece_1, _from_1)
+    all_possible_moves = []
     board.game_board.each_with_index do |row, x|
       row.each_with_index do |_col, y|
         piece = board.game_board[x][y]
         from = x, y
-        next unless piece != '   ' && piece.color != current_player.color && piece.class.name != 'Pawn'
+        unless piece != '   ' && piece.color == current_player.color && piece.class.name != 'Pawn' && piece.class.name != 'King'
+          next
+        end
 
         piece&.starting_moves(from, _to = nil)
-        possible_moves = piece.moves
-        if possible_moves.include?(check_moves) && valid_piece_move?(from, check_moves, piece)
-          puts 'a piece that is NOT a pawn can stop check'
+        possible_moves = piece.moves.uniq
+
+        until possible_moves.empty?
+          if valid_piece_move?(from, possible_moves.first, piece)
+            all_possible_moves << possible_moves.first unless possible_moves.first == []
+          end
+          possible_moves.shift
+        end
+
+        p all_possible_moves
+        # p piece
+        # p "the possible moves on the board are #{possible_moves}"
+        p piece
+        # try to check only the moves that result in check
+        until piece_1.moves.empty?
+          if all_possible_moves.include?(piece_1.moves.first)
+            board.make_move(from, piece_1.moves.first)
+            if check?
+              board.make(piece_1.moves.first, from)
+              return false
+            else
+              board.make_move(piece_1.moves.first, from)
+              return true
+            end
+          end
+          print piece_1.moves.first
+          piece_1.moves.shift
+          # break
         end
       end
+    end
+  end
+
+  def can_block?(possible_moves, piece_1, from, piece)
+    until possible_moves.empty?
+      if possible_moves.include?(piece_1.moves.first) && valid_piece_move?(from, piece_1.moves.first, piece)
+        # p piece_1.moves
+        puts 'a piece that is NOT a pawn can stop check'.green
+        # break
+      end
+      piece_1.moves.shift
     end
   end
 
@@ -226,6 +267,10 @@ class Game
     false
   end
 
+  def mate?
+    puts 'the game is over son'.green if @mate
+  end
+
   def double_check?
     board.game_board.each_with_index do |row, x|
       row.each_with_index do |_col, y|
@@ -241,7 +286,8 @@ class Game
 
         until possible_check_moves.empty?
           # pawn_checkmate?(possible_check_moves)
-          checkmate?(possible_check_moves)
+          p checkmate?(piece, from) ? parse_mate : false
+          # mate_reset
           to = possible_check_moves.first
           return true if valid_piece_move?(from, to, piece)
 
@@ -252,12 +298,17 @@ class Game
     false
   end
 
+  def parse_mate
+    puts 'i should be true' if self != true
+  end
+
   def in_check(current_player)
     error.check_error(current_player)
   end
 
   def check?
     double_check? || pawn_check? ? true : false
+    # binding.pry
   end
 
   def still_in_check(from, to)
