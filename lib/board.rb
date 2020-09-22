@@ -48,7 +48,31 @@ class Board
     end
   end
 
+  def move_it(from, to)
+    return false if from == to
+
+    start_x, start_y = from
+    to_x, to_y = to
+    @game_board[to_x][to_y] = @game_board[start_x][start_y]
+  end
+
+  def start_move_nil(from, to)
+    return false if from == to
+
+    start_x, start_y = from
+    @game_board[start_x][start_y] = '   '
+  end
+
+  def to_nil(from, to)
+    return false if from == to
+
+    to_x, to_y = to
+    @game_board[to_x][to_y] = '   '
+  end
+
   def make_move(from, to)
+    return false if from == to
+
     start_x, start_y = from
     to_x, to_y = to
     @game_board[to_x][to_y] = @game_board[start_x][start_y]
@@ -76,7 +100,7 @@ class Board
                                            else
                                              paint_bg_1(square)
                                            end
-                                              end
+                                            end
       end
     end
     put_board(board)

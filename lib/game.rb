@@ -3,13 +3,15 @@
 require_relative './board'
 require_relative './error'
 require_relative './modules/vector'
+require_relative './modules/checkmate'
 require 'pry'
 
 # game class is responsbile for game loop and game logic
 class Game
   Player = Struct.new(:name, :color)
   include Vector
-  attr_reader :board, :player1, :player2, :current_player, :answer, :from, :to, :error, :diag_val, :current, :mate
+  attr_reader :board, :player1, :player2, :current_player, :answer, :from, :to, :error, :diag_val, :current
+  include Checkmate
   def initialize
     @player1 = Player.new('Henry', :white)
     @player2 = Player.new('Sarah', :black)
@@ -22,7 +24,6 @@ class Game
     @diag_val = nil
     @current = current
     @current_player = player1
-    @mate = nil
   end
 
   # TODO: create set_players and intro_text
@@ -35,7 +36,7 @@ class Game
   def play_game
     loop do
       board.display_board
-      # checkmate?
+      get_attacking_piece?
       check? ? in_check(current_player) : false
       puts "\n#{current_player.name}, make a move"
       set_move
@@ -60,29 +61,11 @@ class Game
     board.make_move(from, to)
     puts_king_in_check?(from, to)
     still_in_check(from, to)
-
-    # mate?
+    # checkmate?()
   end
 
-  # def pawn_checkmate?(check_moves)
-  #   check_moves = check_moves.flatten
-  #   board.game_board.each_with_index do |row, x|
-  #     row.each_with_index do |_col, y|
-  #       piece = board.game_board[x][y]
-  #       from = x, y
-  #       next unless piece != '   ' && piece.color == current_player.color && piece.class.name == 'Pawn'
-
-  #       pawn_moves = piece.all_pawn_moves(from)
-
-  #       if pawn_moves.include?(check_moves) && valid_piece_move?(from, check_moves, piece)
-  #         puts 'a pawn can stop check'
-  #       end
-  #     end
-  #   end
-  # end
-
   # take the moves generated from check
-  def checkmate?(piece_1, _from_1)
+  def checkmate?(from_1, piece_1)
     all_possible_moves = []
     board.game_board.each_with_index do |row, x|
       row.each_with_index do |_col, y|
@@ -94,47 +77,25 @@ class Game
 
         piece&.starting_moves(from, _to = nil)
         possible_moves = piece.moves.uniq
-
         until possible_moves.empty?
           if valid_piece_move?(from, possible_moves.first, piece)
             all_possible_moves << possible_moves.first unless possible_moves.first == []
           end
           possible_moves.shift
         end
-
-        p all_possible_moves
-        # p piece
-        # p "the possible moves on the board are #{possible_moves}"
-        p piece
-        # try to check only the moves that result in check
-        until piece_1.moves.empty?
-          if all_possible_moves.include?(piece_1.moves.first)
-            board.make_move(from, piece_1.moves.first)
-            if check?
-              board.make(piece_1.moves.first, from)
-              return false
-            else
-              board.make_move(piece_1.moves.first, from)
-              return true
-            end
-          end
-          print piece_1.moves.first
-          piece_1.moves.shift
-          # break
-        end
+        p final_mate?(from_1, piece_1, all_possible_moves)
       end
     end
+    false
   end
 
-  def can_block?(possible_moves, piece_1, from, piece)
-    until possible_moves.empty?
-      if possible_moves.include?(piece_1.moves.first) && valid_piece_move?(from, piece_1.moves.first, piece)
-        # p piece_1.moves
-        puts 'a piece that is NOT a pawn can stop check'.green
-        # break
-      end
-      piece_1.moves.shift
-    end
+  # uses checkmate helper methods to see if there are any valid moves out of check. if not, it is mate.
+  def final_mate?(from1, piece1, all_possible_moves)
+    x, y = king_position
+    king = board.game_board[x][y]
+    
+    
+    !block_check?(piece1, from1, all_possible_moves) && !can_take_piece?(all_possible_moves, from1)
   end
 
   # ensures that subsequent move does not put king in check
@@ -282,12 +243,7 @@ class Game
         possible_moves = piece.moves
         player_king_pos = king_position
         possible_check_moves = check_king(player_king_pos, possible_moves)
-        # checkmate?(possible_check_moves, piece)
-
         until possible_check_moves.empty?
-          # pawn_checkmate?(possible_check_moves)
-          p checkmate?(piece, from) ? parse_mate : false
-          # mate_reset
           to = possible_check_moves.first
           return true if valid_piece_move?(from, to, piece)
 
@@ -296,6 +252,26 @@ class Game
       end
     end
     false
+  end
+
+  def get_attacking_piece?
+    board.game_board.each_with_index do |row, x|
+      row.each_with_index do |_col, y|
+        piece = board.game_board[x][y]
+        from = x, y
+        next unless piece != '   ' && piece.color != current_player.color && piece.class.name != 'Pawn'
+
+        piece&.starting_moves(from, _to = nil)
+        possible_moves = piece.moves
+        player_king_pos = king_position
+        possible_check_moves = check_king(player_king_pos, possible_moves)
+
+        until possible_check_moves.empty?
+          checkmate?(from, piece)
+          possible_check_moves.shift
+        end
+      end
+    end
   end
 
   def parse_mate
