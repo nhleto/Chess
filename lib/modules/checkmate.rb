@@ -68,27 +68,62 @@ module Checkmate
     all_possible_moves.include?(from1) ? true : false
   end
 
-  def get_opponent_pieces(board)
+  def get_opponent_pieces
     pieces = []
     0.upto(7) do |i|
       0.upto(7) do |j|
-        piece = board[i][j]
-        pieces.push(board[i][j]) if board[i][j] != '   ' && piece.color != current_player.color
+        piece = board.game_board[i][j]
+        pieces.push(board.game_board[i][j]) if board.game_board[i][j] != '   ' && piece.color != current_player.color
       end
     end
     pieces
   end
 
-  def possible_opponent_moves
+  def possible_opponent_moves(from)
     poss_moves = []
-    opp_pieces = get_opponent_pieces(board)
+    opp_pieces = get_opponent_pieces
     opp_pieces.each do |piece|
       if piece.class != King && piece.class != Pawn
         poss_moves += piece.moves
       elsif piece.class == Pawn
-        poss_moves += piece.all_pawn_moves
+        poss_moves += piece.all_pawn_moves(from)
       end
     end
     poss_moves.uniq
   end
+
+  # def legal_king_moves(from, from1, piece1)
+  #   x, y = king_position
+  #   king = board.game_board[x][y]
+  #   possible_moves = king.moves
+  #   opponent_moves = possible_opponent_moves(from)
+  #   poss_moves = legal_possible_move(king_position, king, possible_moves)
+  #   free_move = safe_poss_moves(from1, piece1)
+  #   arr = []
+  #   if !opponent_moves.include?(poss_moves)
+  #     arr << poss_moves
+  #   end
+  #   filter = arr.filter { |move| !free_move.include?(move) }
+  #   p filter
+  # end
+
+  # def safe_poss_moves(from1, piece1)
+  #   moves = []
+  #   piece1.moves.each do |move|
+  #     if legal_move?(from1, move, piece1)
+  #       moves << move
+  #     end
+  #   end
+  #   moves
+  # end
+
+  # def legal_possible_move(king_position, king, possible_moves)
+  #   potential_moves = []
+  #   possible_moves.each do |move|
+  #     if legal_move?(king_position, move, king)
+  #       potential_moves << move
+  #     end
+  #   end
+  #   potential_moves
+  # end
 end

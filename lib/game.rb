@@ -9,9 +9,10 @@ require 'pry'
 # game class is responsbile for game loop and game logic
 class Game
   Player = Struct.new(:name, :color)
-  include Vector
   attr_reader :board, :player1, :player2, :current_player, :answer, :from, :to, :error, :diag_val, :current
   include Checkmate
+  include Vector
+  include BoardCoords
   def initialize
     @player1 = Player.new('Henry', :white)
     @player2 = Player.new('Sarah', :black)
@@ -36,7 +37,7 @@ class Game
   def play_game
     loop do
       board.display_board
-      get_attacking_piece?
+      check_if_checkmate?
       check? ? in_check(current_player) : false
       puts "\n#{current_player.name}, make a move"
       set_move
@@ -91,11 +92,12 @@ class Game
 
   # uses checkmate helper methods to see if there are any valid moves out of check. if not, it is mate.
   def final_mate?(from1, piece1, all_possible_moves)
-    x, y = king_position
-    king = board.game_board[x][y]
-    
-    
     !block_check?(piece1, from1, all_possible_moves) && !can_take_piece?(all_possible_moves, from1)
+  end
+
+  def checkmate_message
+    opponent = current_player == @player1 ? @player2 : @player1
+    puts "\n#{current_player.name} has been mated. #{opponent.name} is the winner!".green
   end
 
   # ensures that subsequent move does not put king in check
@@ -254,7 +256,7 @@ class Game
     false
   end
 
-  def get_attacking_piece?
+  def check_if_checkmate?
     board.game_board.each_with_index do |row, x|
       row.each_with_index do |_col, y|
         piece = board.game_board[x][y]

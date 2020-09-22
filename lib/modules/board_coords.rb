@@ -47,4 +47,49 @@ module BoardCoords
     end
     arr
   end
+
+  def self.revert(input)
+    arr = []
+    x_coord = input[1]
+    y_coord = input[0]
+
+    case x_coord.to_i
+    when 7
+      arr << 1
+    when 6
+      arr << 2
+    when 5
+      arr << 3
+    when 4
+      arr << 4
+    when 3
+      arr << 5
+    when 2
+      arr << 6
+    when 1
+      arr << 7
+    when 0
+      arr << 8
+    end
+
+    case y_coord
+    when 0
+      arr << 'a'
+    when 1
+      arr << 'b'
+    when 2
+      arr << 'c'
+    when 3
+      arr << 'd'
+    when 4
+      arr << 'e'
+    when 5
+      arr << 'f'
+    when 6
+      arr << 'g'
+    when 7
+      arr << 'h'
+    end
+    arr
+  end
 end
