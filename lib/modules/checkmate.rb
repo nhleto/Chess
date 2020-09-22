@@ -83,13 +83,20 @@ module Checkmate
     poss_moves = []
     opp_pieces = get_opponent_pieces
     opp_pieces.each do |piece|
-      if piece.class != King && piece.class != Pawn
-        poss_moves += piece.moves
+      if piece.class != King && piece.class != Pawn # deciding if this returns pieces or just moves
+        poss_moves += piece.moves # want to check if is a legal move before passing to array
       elsif piece.class == Pawn
         poss_moves += piece.all_pawn_moves(from)
       end
     end
     poss_moves.uniq
+  end
+
+  # identifies piece that put king in check
+  def checking_piece(from)
+    king_pos = king_position
+    checking_pieces = possible_opponent_moves(from)
+    # potentially running thorugh legal move or making a method that takes the piece appropriately
   end
 
   # def legal_king_moves(from, from1, piece1)

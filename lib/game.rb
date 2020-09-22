@@ -37,7 +37,7 @@ class Game
   def play_game
     loop do
       board.display_board
-      check_if_checkmate?
+      # check_if_checkmate?
       check? ? in_check(current_player) : false
       puts "\n#{current_player.name}, make a move"
       set_move
@@ -56,6 +56,7 @@ class Game
   end
 
   def vet_piece_move?(from, to)
+    p checking_piece(from)
     piece = board.get_active_piece(from)
     validate_turn(from, piece)
     # valid_piece_move?(from, to, piece) ? board.make_move(from, to) : valid_move_false(from, to)
@@ -84,8 +85,8 @@ class Game
           end
           possible_moves.shift
         end
-        p final_mate?(from_1, piece_1, all_possible_moves)
       end
+      p final_mate?(from_1, piece_1, all_possible_moves)
     end
     false
   end
