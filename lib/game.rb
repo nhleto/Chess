@@ -93,6 +93,7 @@ class Game
 
   # uses checkmate helper methods to see if there are any valid moves out of check. if not, it is mate.
   def final_mate?(from1, piece1, all_possible_moves)
+    p checking_piece(from)
     !block_check?(piece1, from1, all_possible_moves) && !can_take_piece?(all_possible_moves, from1)
   end
 

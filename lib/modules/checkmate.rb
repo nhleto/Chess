@@ -23,7 +23,7 @@ module Checkmate
                      vertical_between_squares(king_pos, from1)
                    else
                      diag_between_squares(king_pos, from1)
-    end
+                   end
     btwn_squares
   end
 
@@ -80,13 +80,16 @@ module Checkmate
   end
 
   def possible_opponent_moves(from)
+    king_pos = king_position
     poss_moves = []
     opp_pieces = get_opponent_pieces
     opp_pieces.each do |piece|
       if piece.class != King && piece.class != Pawn # deciding if this returns pieces or just moves
-        poss_moves += piece.moves # want to check if is a legal move before passing to array
+        if legal_move?(from, king_pos, piece)
+          poss_moves << piece.moves # want to check if is a legal move before passing to array
+        end
       elsif piece.class == Pawn
-        poss_moves += piece.all_pawn_moves(from)
+        poss_moves << piece.all_pawn_moves(from) if legal_move?(from, king_pos, piece)
       end
     end
     poss_moves.uniq
@@ -95,8 +98,16 @@ module Checkmate
   # identifies piece that put king in check
   def checking_piece(from)
     king_pos = king_position
-    checking_pieces = possible_opponent_moves(from)
-    # potentially running thorugh legal move or making a method that takes the piece appropriately
+    p checking_moves = possible_opponent_moves(from)
+    possible_check_moves = []
+    checking_moves.each do |move|
+      if legal_move
+        possible_check_moves << move if check_king(king_pos, move)
+      end
+    end
+    # p possible_check_moves
+    # check_king(king_pos, checking_moves)
+    # potentially running through legal move or making a method that takes the piece appropriately
   end
 
   # def legal_king_moves(from, from1, piece1)
