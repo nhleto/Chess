@@ -37,7 +37,7 @@ class Game
   def play_game
     loop do
       board.display_board
-      # check_if_checkmate?
+      check_if_checkmate?
       check? ? in_check(current_player) : false
       puts "\n#{current_player.name}, make a move"
       set_move
@@ -56,14 +56,14 @@ class Game
   end
 
   def vet_piece_move?(from, to)
-    p checking_piece(from)
+    # p checking_piece(from)
     piece = board.get_active_piece(from)
     validate_turn(from, piece)
     # valid_piece_move?(from, to, piece) ? board.make_move(from, to) : valid_move_false(from, to)
     board.make_move(from, to)
     puts_king_in_check?(from, to)
+    # p legal_king_moves(king_position, to)
     still_in_check(from, to)
-    # checkmate?()
   end
 
   # take the moves generated from check
@@ -76,6 +76,7 @@ class Game
         unless piece != '   ' && piece.color == current_player.color && piece.class.name != 'Pawn' && piece.class.name != 'King'
           next
         end
+        p final_mate?(from_1, piece_1, all_possible_moves)
 
         piece&.starting_moves(from, _to = nil)
         possible_moves = piece.moves.uniq
@@ -86,14 +87,14 @@ class Game
           possible_moves.shift
         end
       end
-      p final_mate?(from_1, piece_1, all_possible_moves)
     end
     false
   end
 
   # uses checkmate helper methods to see if there are any valid moves out of check. if not, it is mate.
   def final_mate?(from1, piece1, all_possible_moves)
-    p checking_piece(from)
+    # from = BoardCoords.create_coord(@from)
+    # p legal_king_moves
     !block_check?(piece1, from1, all_possible_moves) && !can_take_piece?(all_possible_moves, from1)
   end
 
@@ -105,6 +106,7 @@ class Game
   # ensures that subsequent move does not put king in check
   def puts_king_in_check?(from, to)
     if check?
+      legal_king_moves(from, to = nil)
       error.bad_check_move(current_player)
       board.make_move(to, from)
       play_game
@@ -232,8 +234,8 @@ class Game
     false
   end
 
-  def mate?
-    puts 'the game is over son'.green if @mate
+  def mate
+    puts 'the game is over son'.green
   end
 
   def double_check?
@@ -271,19 +273,16 @@ class Game
         possible_check_moves = check_king(player_king_pos, possible_moves)
 
         until possible_check_moves.empty?
-          checkmate?(from, piece)
+          p checkmate?(from, piece)
           possible_check_moves.shift
         end
       end
     end
   end
 
-  def parse_mate
-    puts 'i should be true' if self != true
-  end
-
   def in_check(current_player)
     error.check_error(current_player)
+    legal_king_moves(king_position, to)
   end
 
   def check?

@@ -79,54 +79,68 @@ module Checkmate
     pieces
   end
 
-  def possible_opponent_moves(from)
-    king_pos = king_position
-    poss_moves = []
-    opp_pieces = get_opponent_pieces
-    opp_pieces.each do |piece|
-      if piece.class != King && piece.class != Pawn # deciding if this returns pieces or just moves
-        if legal_move?(from, king_pos, piece)
-          poss_moves << piece.moves # want to check if is a legal move before passing to array
-        end
-      elsif piece.class == Pawn
-        poss_moves << piece.all_pawn_moves(from) if legal_move?(from, king_pos, piece)
-      end
-    end
-    poss_moves.uniq
-  end
-
-  # identifies piece that put king in check
-  def checking_piece(from)
-    king_pos = king_position
-    p checking_moves = possible_opponent_moves(from)
-    possible_check_moves = []
-    checking_moves.each do |move|
-      if legal_move
-        possible_check_moves << move if check_king(king_pos, move)
-      end
-    end
-    # p possible_check_moves
-    # check_king(king_pos, checking_moves)
-    # potentially running through legal move or making a method that takes the piece appropriately
-  end
-
-  # def legal_king_moves(from, from1, piece1)
-  #   x, y = king_position
-  #   king = board.game_board[x][y]
-  #   possible_moves = king.moves
-  #   opponent_moves = possible_opponent_moves(from)
-  #   poss_moves = legal_possible_move(king_position, king, possible_moves)
-  #   free_move = safe_poss_moves(from1, piece1)
-  #   arr = []
-  #   if !opponent_moves.include?(poss_moves)
-  #     arr << poss_moves
+  # def possible_opponent_moves(from)
+  #   king_pos = king_position
+  #   poss_moves = []
+  #   opp_pieces = get_opponent_pieces
+  #   opp_pieces.each do |piece|
+  #     if piece.class != King && piece.class != Pawn # deciding if this returns pieces or just moves
+  #       # piece.moves.each do |move|
+  #       #   if check_if_piece_in_way?(from, king_pos, piece)
+  #       #     p "the valid move for #{piece} is #{move}"
+  #       #   end
+  #       # end
+  #     elsif piece.class == Pawn
+  #       poss_moves << piece.all_pawn_moves(from)
+  #     end
   #   end
-  #   filter = arr.filter { |move| !free_move.include?(move) }
-  #   p filter
+  #   poss_moves.uniq
   # end
 
-  # def safe_poss_moves(from1, piece1)
+  # # identifies piece that put king in check
+  # def checking_piece(from)
+  #   king_pos = king_position
+  #   p checking_moves = possible_opponent_moves(from)
+  #   possible_check_moves = []
+  #   checking_moves.each do |move|
+  #     # if legal_move?(from, move, piece)
+  #       possible_check_moves << move if check_king(king_pos, move)
+  #     end
+  #   end
+  #   # p possible_check_moves
+  #   # check_king(king_pos, checking_moves)
+  #   # potentially running through legal move or making a method that takes the piece appropriately
+  # # end
+
+  def legal_king_moves(from, to = nil)
+    x, y = king_position
+    king = board.game_board[x][y]
+    king.starting_moves(from, to)
+    possible_moves = king.moves
+    poss_moves = legal_possible_move(king_position, king, possible_moves)
+    check_moves(poss_moves)
+  end
+
+  def check_moves(poss_moves)
+    king_position1 = king_position
+    reject_moves = []
+    safe_moves = []
+    poss_moves.each do |move|
+      board.make_move(king_position, move)
+      if check?
+        reject_moves << move
+        # board.to_nil(king_position, move)
+      elsif !check?
+        safe_moves << move
+      end
+    end
+    board.make_move(king_position, king_position1)
+    safe_moves.length.zero? ? mate : false
+  end
+
+  # def safe_opponent_moves(from1, piece1)
   #   moves = []
+  #   king_pos = king_position
   #   piece1.moves.each do |move|
   #     if legal_move?(from1, move, piece1)
   #       moves << move
@@ -135,13 +149,14 @@ module Checkmate
   #   moves
   # end
 
-  # def legal_possible_move(king_position, king, possible_moves)
-  #   potential_moves = []
-  #   possible_moves.each do |move|
-  #     if legal_move?(king_position, move, king)
-  #       potential_moves << move
-  #     end
-  #   end
-  #   potential_moves
-  # end
+  def legal_possible_move(king_position, king, possible_moves)
+    # p "legal opponent moves are #{legal_opponent_moves}"
+    potential_moves = []
+    possible_moves.each do |move|
+      if legal_move?(king_position, move, king)
+        potential_moves << move
+      end
+    end
+    potential_moves
+  end
 end

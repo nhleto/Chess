@@ -71,7 +71,7 @@ class Board
   end
 
   def make_move(from, to)
-    # return false if from == to
+    return false if from == to
 
     start_x, start_y = from
     to_x, to_y = to
@@ -121,22 +121,22 @@ class Board
       # board[6][i] = Pawn.new(:white)
       board[1][i] = Pawn.new(:black)
     end
-    board[7][0] = Rook.new(:white)
-    board[7][7] = Rook.new(:white)
+    # board[7][0] = Rook.new(:white)
+    # board[7][7] = Rook.new(:white)
     board[0][0] = Rook.new(:black)
     board[0][7] = Rook.new(:black)
 
-    board[7][1] = Knight.new(:white)
-    board[7][6] = Knight.new(:white)
+    # board[7][1] = Knight.new(:white)
+    # board[7][6] = Knight.new(:white)
     board[0][1] = Knight.new(:black)
     board[0][6] = Knight.new(:black)
 
-    board[7][2] = Bishop.new(:white)
-    board[7][5] = Bishop.new(:white)
+    # board[7][2] = Bishop.new(:white)
+    # board[7][5] = Bishop.new(:white)
     board[0][2] = Bishop.new(:black)
     board[0][5] = Bishop.new(:black)
 
-    board[7][3] = Queen.new(:white)
+    # board[7][3] = Queen.new(:white)
     board[7][4] = King.new(:white)
     board[0][3] = Queen.new(:black)
     board[0][4] = King.new(:black)
