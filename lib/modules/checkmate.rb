@@ -10,7 +10,6 @@ module Checkmate
   end
 
   def block_check?(piece1, from1, all_possible_moves)
-    # special_piece = [Rook, Bishop, Queen].include?(piece1.class)
     blockers = potential_blockers(piece1, from1, all_possible_moves)
     blockers.length.positive? ? true : false
   end
@@ -28,7 +27,6 @@ module Checkmate
   end
 
   def diag_between_squares(king_pos, from1)
-    # p "the king is at #{king_pos}"
     moves = []
     row, col = Vector.create_direction_vector(king_pos, from1)
     shift = (king_pos[0] - from1[0]).abs
@@ -79,39 +77,6 @@ module Checkmate
     pieces
   end
 
-  # def possible_opponent_moves(from)
-  #   king_pos = king_position
-  #   poss_moves = []
-  #   opp_pieces = get_opponent_pieces
-  #   opp_pieces.each do |piece|
-  #     if piece.class != King && piece.class != Pawn # deciding if this returns pieces or just moves
-  #       # piece.moves.each do |move|
-  #       #   if check_if_piece_in_way?(from, king_pos, piece)
-  #       #     p "the valid move for #{piece} is #{move}"
-  #       #   end
-  #       # end
-  #     elsif piece.class == Pawn
-  #       poss_moves << piece.all_pawn_moves(from)
-  #     end
-  #   end
-  #   poss_moves.uniq
-  # end
-
-  # # identifies piece that put king in check
-  # def checking_piece(from)
-  #   king_pos = king_position
-  #   p checking_moves = possible_opponent_moves(from)
-  #   possible_check_moves = []
-  #   checking_moves.each do |move|
-  #     # if legal_move?(from, move, piece)
-  #       possible_check_moves << move if check_king(king_pos, move)
-  #     end
-  #   end
-  #   # p possible_check_moves
-  #   # check_king(king_pos, checking_moves)
-  #   # potentially running through legal move or making a method that takes the piece appropriately
-  # # end
-
   def legal_king_moves(from, to = nil)
     x, y = king_position
     king = board.game_board[x][y]
@@ -126,7 +91,7 @@ module Checkmate
     reject_moves = []
     safe_moves = []
     poss_moves.each do |move|
-      board.make_move(king_position, move)
+      board.move_it(king_position, move) unless board.game_board
       if check?
         reject_moves << move
         # board.to_nil(king_position, move)
@@ -134,20 +99,16 @@ module Checkmate
         safe_moves << move
       end
     end
+    puts "safe moves are #{safe_moves}"
+    puts "shit moves are #{reject_moves}"
     board.make_move(king_position, king_position1)
-    safe_moves.length.zero? ? mate : false
+    if safe_moves.length.zero? # this keeps breaking the game!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      @safe_moves = 0
+      true
+    else
+      false
+    end
   end
-
-  # def safe_opponent_moves(from1, piece1)
-  #   moves = []
-  #   king_pos = king_position
-  #   piece1.moves.each do |move|
-  #     if legal_move?(from1, move, piece1)
-  #       moves << move
-  #     end
-  #   end
-  #   moves
-  # end
 
   def legal_possible_move(king_position, king, possible_moves)
     # p "legal opponent moves are #{legal_opponent_moves}"

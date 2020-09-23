@@ -4,15 +4,17 @@ require_relative './board'
 require_relative './error'
 require_relative './modules/vector'
 require_relative './modules/checkmate'
+require_relative './modules/helpermethods'
 require 'pry'
 
 # game class is responsbile for game loop and game logic
 class Game
   Player = Struct.new(:name, :color)
-  attr_reader :board, :player1, :player2, :current_player, :answer, :from, :to, :error, :diag_val, :current
+  attr_reader :board, :player1, :player2, :current_player, :answer, :from, :to, :error, :diag_val, :current, :safe_moves
   include Checkmate
   include Vector
   include BoardCoords
+  include HelperMethods
   def initialize
     @player1 = Player.new('Henry', :white)
     @player2 = Player.new('Sarah', :black)
@@ -25,6 +27,7 @@ class Game
     @diag_val = nil
     @current = current
     @current_player = player1
+    @safe_moves = nil
   end
 
   # TODO: create set_players and intro_text
@@ -38,6 +41,7 @@ class Game
     loop do
       board.display_board
       check_if_checkmate?
+      check_if_pawn_checkmate?
       check? ? in_check(current_player) : false
       puts "\n#{current_player.name}, make a move"
       set_move
@@ -64,6 +68,10 @@ class Game
     puts_king_in_check?(from, to)
     # p legal_king_moves(king_position, to)
     still_in_check(from, to)
+    if piece.class.name == 'Pawn'
+      p piece
+      pawn_promotion(from, to, piece)
+    end
   end
 
   # take the moves generated from check
@@ -76,6 +84,7 @@ class Game
         unless piece != '   ' && piece.color == current_player.color && piece.class.name != 'Pawn' && piece.class.name != 'King'
           next
         end
+
         p final_mate?(from_1, piece_1, all_possible_moves)
 
         piece&.starting_moves(from, _to = nil)
@@ -88,14 +97,12 @@ class Game
         end
       end
     end
-    false
+    # false
   end
 
   # uses checkmate helper methods to see if there are any valid moves out of check. if not, it is mate.
   def final_mate?(from1, piece1, all_possible_moves)
-    # from = BoardCoords.create_coord(@from)
-    # p legal_king_moves
-    !block_check?(piece1, from1, all_possible_moves) && !can_take_piece?(all_possible_moves, from1)
+    !block_check?(piece1, from1, all_possible_moves) && !can_take_piece?(all_possible_moves, from1) && @safe_moves == 0
   end
 
   def checkmate_message
@@ -193,7 +200,6 @@ class Game
 
   def check_king(king_pos, possible_moves)
     moves = []
-    # p possible_moves
     possible_moves.each do |pos|
       moves << pos if pos == king_pos
     end
@@ -222,9 +228,9 @@ class Game
         player_king_pos = king_position
         possible_pawn_check_moves = check_king(player_king_pos, pawn_moves)
         until possible_pawn_check_moves.empty?
-
           to = possible_pawn_check_moves.first
           valid_piece_move?(from, to, piece)
+          # checkmate?(from, piece)
           return true if valid_piece_move?(from, to, piece)
 
           possible_pawn_check_moves.shift
@@ -235,7 +241,8 @@ class Game
   end
 
   def mate
-    puts 'the game is over son'.green
+    puts "CHECKMATE. #{opponent.name} is the winner and the game is over.".green
+    exit
   end
 
   def double_check?
@@ -251,6 +258,7 @@ class Game
         possible_check_moves = check_king(player_king_pos, possible_moves)
         until possible_check_moves.empty?
           to = possible_check_moves.first
+          # checkmate?(from, piece)
           return true if valid_piece_move?(from, to, piece)
 
           possible_check_moves.shift
@@ -271,10 +279,27 @@ class Game
         possible_moves = piece.moves
         player_king_pos = king_position
         possible_check_moves = check_king(player_king_pos, possible_moves)
-
         until possible_check_moves.empty?
-          p checkmate?(from, piece)
+          checkmate?(from, piece)
           possible_check_moves.shift
+        end
+      end
+    end
+  end
+
+  def check_if_pawn_checkmate?
+    board.game_board.each_with_index do |row, x|
+      row.each_with_index do |_col, y|
+        piece = board.game_board[x][y]
+        from = x, y
+        next unless piece != '   ' && piece.color != current_player.color && piece.class.name == 'Pawn'
+
+        pawn_moves = piece.all_pawn_moves(from)
+        player_king_pos = king_position
+        possible_pawn_check_moves = check_king(player_king_pos, pawn_moves)
+        until possible_pawn_check_moves.empty?
+          checkmate?(from, piece)
+          possible_pawn_check_moves.shift
         end
       end
     end
@@ -287,7 +312,6 @@ class Game
 
   def check?
     double_check? || pawn_check? ? true : false
-    # binding.pry
   end
 
   def still_in_check(from, to)
@@ -300,6 +324,10 @@ class Game
 
   def validate_move_true(from, to)
     still_in_check(from, to)
+  end
+
+  def opponent
+    opponent = current_player == @player1 ? @player2 : @player1
   end
 
   def valid_move_false(_from, _to)
