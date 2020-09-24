@@ -11,7 +11,7 @@ module HelperMethods
   def pawn_promotion(to, piece)
     i, j = to
     options = [Queen, Bishop, Rook, Knight, Pawn]
-    if piece.color == :white && board.game_board[i].zero?
+    if piece.color == :white && i.zero?
       pawn_promotion_message(options)
       choose_piece(to)
     elsif piece.color == :black && i == 7

@@ -75,6 +75,7 @@ class Game
     piece.starting_moves(from, to)
     case piece.class.name
     when 'Pawn'
+      piece.en_passant(from, board.game_board)
       legal_move?(from, to, piece) && piece.capture_piece(from, to, board.game_board) ? true : false
     when 'King'
       legal_move?(from, to, piece) ? true : false

@@ -2,9 +2,10 @@
 
 # super piece class
 class Piece
-  attr_accessor :moves
-  def initialize
+  attr_accessor :moves, :last_move
+  def initialize(moves, last_move)
     @moves = moves
+    @last_move = []
   end
 
   def name
