@@ -127,22 +127,24 @@ class Pawn < Piece
     capture_moves.include?(to) && to != color ? true : false
   end
 
-  def en_passant(from, board)
-    x, y = from
-    row = color == :white ? 4 : 3
-    possible = false
+  # def en_passant(from, board)
+  #   x, y = from
+  #   row = color == :white ? 4 : 3
+  #   possible = false
 
-    # return false unless x == row
+  #   # return false unless x == row
 
-    p white_piece_possible = parse_side_piece?(from, board)
-    p black_piece_possible = parse_side_piece?(from, board)
-  end
+  #   p white_piece_possible = parse_side_piece?(from, board)
+  #   p black_piece_possible = parse_side_piece?(from, board)
+  # end
 
   def parse_side_piece?(from, board)
     x, y = from
+    piece = board[x][y + 1]
+    piece1 = board[x][y - 1]
     if board[x][y + 1] != '   ' && piece.color != color && piece.class.name == 'Pawn'
       true
-    elsif board[x][y - 1] != '   ' && piece.color != color && piece.class.name == 'Pawn'
+    elsif board[x][y - 1] != '   ' && piece1.color != color && piece.class.name == 'Pawn'
       true
     else
       false
