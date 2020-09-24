@@ -63,15 +63,30 @@ class Game
     # p checking_piece(from)
     piece = board.get_active_piece(from)
     validate_turn(from, piece)
-    # valid_piece_move?(from, to, piece) ? board.make_move(from, to) : valid_move_false(from, to)
-    board.make_move(from, to)
+    valid_piece_move?(from, to, piece) ? board.make_move(from, to) : valid_move_false(from, to)
+    # board.make_move(from, to)
     puts_king_in_check?(from, to)
     # p legal_king_moves(king_position, to)
     still_in_check(from, to)
-    if piece.class.name == 'Pawn'
-      p piece
-      pawn_promotion(from, to, piece)
+    promote_pawn?(to, piece)
+  end
+
+  def valid_piece_move?(from, to, piece)
+    piece.starting_moves(from, to)
+    case piece.class.name
+    when 'Pawn'
+      legal_move?(from, to, piece) && piece.capture_piece(from, to, board.game_board) ? true : false
+    when 'King'
+      legal_move?(from, to, piece) ? true : false
+    when 'Knight'
+      validate_knight?(to, piece) && piece.check_moves?(to) ? true : false
+    else
+      legal_move?(from, to, piece) ? true : false
     end
+  end
+
+  def legal_move?(from, to, piece)
+    check_if_piece_in_way?(from, to, piece) && piece.check_moves?(to) && legal_capture?(current, to, piece) ? true : false
   end
 
   # take the moves generated from check
@@ -120,25 +135,6 @@ class Game
     else
       true
     end
-  end
-
-  def valid_piece_move?(from, to, piece)
-    piece.starting_moves(from, to)
-    case piece.class.name
-    when 'Pawn'
-      legal_move?(from, to, piece) && piece.capture_piece(from, to, board.game_board) ? true : false
-      # binding.pry
-    when 'King'
-      legal_move?(from, to, piece) ? true : false
-    when 'Knight'
-      validate_knight?(to, piece) && piece.check_moves?(to) ? true : false
-    else
-      legal_move?(from, to, piece) ? true : false
-    end
-  end
-
-  def legal_move?(from, to, piece)
-    check_if_piece_in_way?(from, to, piece) && piece.check_moves?(to) && legal_capture?(current, to, piece) ? true : false
   end
 
   def check_if_piece_in_way?(from, to, piece)
