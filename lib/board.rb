@@ -121,7 +121,6 @@ class Board
       # board[6][i] = Pawn.new(:white)
       board[1][i] = Pawn.new(:black)
     end
-    board[6][0] = Pawn.new(:black)
     # board[7][0] = Rook.new(:white)
     # board[7][7] = Rook.new(:white)
     board[0][0] = Rook.new(:black)
