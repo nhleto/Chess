@@ -61,7 +61,7 @@ class Game
   def vet_piece_move?(from, to)
     # p checking_piece(from)
     piece = board.get_active_piece(from)
-    # validate_turn(from, piece)
+    validate_turn(from, piece)
     valid_piece_move?(from, to, piece) ? board.make_move(from, to) : valid_move_false(from, to)
     # board.make_move(from, to)
     puts_king_in_check?(from, to)
@@ -74,7 +74,8 @@ class Game
     piece.starting_moves(from, to)
     case piece.class.name
     when 'Pawn'
-      piece.en_passant(from, board.game_board)
+      piece.en_passant(from, to, board.game_board)
+      piece.toggle_ep(to, board.game_board) # f around with this
       legal_move?(from, to, piece) && piece.capture_piece(from, to, board.game_board) ? true : false
     when 'King'
       legal_move?(from, to, piece) ? true : false

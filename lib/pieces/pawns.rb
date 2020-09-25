@@ -2,14 +2,18 @@
 
 require 'colorize'
 require_relative './piece.rb'
+require_relative '../modules/helpermethods'
 
 # pawn clas
 class Pawn < Piece
-  attr_reader :symbol, :color, :moved
+  include HelperMethods
+  attr_reader :symbol, :color, :moved, :ep_move, :crossed_piece
   def initialize(color)
     @symbol = piece
     @color = color
     @moved = false
+    @ep_move = nil
+    @crossed_piece = []
     super(moves, last_move)
   end
 
@@ -96,8 +100,8 @@ class Pawn < Piece
       elsif destination.color == color
         false
       end
-    elsif capture_moves(from, to)
-      false
+    elsif capture_moves(from, to) # this method is the en_passant problem // i think its fixed now. changed return value to 'true'
+      true
     else
       true
     end
@@ -116,7 +120,10 @@ class Pawn < Piece
   # if a capture move takes an enemy piece / return true. else , return false
   def capture_moves(from, to)
     x, y = from
+    i, j = to
     capture_moves = []
+    capture_moves << [i + 1, j - 1]
+    capture_moves << [i - 1, j + 1]
     capture_moves << [x - 1, y + 1]
     capture_moves << [x - 1, y - 1]
     capture_moves << [x + 1, y + 1]
@@ -127,43 +134,78 @@ class Pawn < Piece
     capture_moves.include?(to) && to != color ? true : false
   end
 
-  # def en_passant(from, board)
-  #   x, y = from
-  #   row = color == :white ? 4 : 3
-  #   possible = false
-
-  #   # return false unless x == row
-
-  #   p white_piece_possible = parse_side_piece?(from, board)
-  #   p black_piece_possible = parse_side_piece?(from, board)
-  # end
-
-  def parse_side_piece?(from, board)
+  def en_passant(from, to, board)
     x, y = from
-    piece = board[x][y + 1]
-    piece1 = board[x][y - 1]
-    if board[x][y + 1] != '   ' && piece.color != color && piece.class.name == 'Pawn'
-      true
-    elsif board[x][y - 1] != '   ' && piece1.color != color && piece.class.name == 'Pawn'
-      true
-    else
-      false
+    row = color == :white ? 4 : 3
+
+    return false unless x == row
+
+    right_cell_occupied = parse_side_piece_right?(to, board)
+    left_cell_occupied = parse_side_piece_left?(to, board)
+
+    moves = push_ep_moves(to, board) if right_cell_occupied
+    moves = push_ep_moves(to, board) if left_cell_occupied
+    @ep_move = moves
+    @moves << moves
+  end
+
+  def parse_side_piece_right?(to, board)
+    i, j = to
+    piece = board[i][j + 1]
+    board[i][j + 1] != '   ' && piece.color != color && piece.class.name == 'Pawn' ? true : false
+  end
+
+  def parse_side_piece_left?(to, board)
+    i, j = to
+    piece = board[i][j - 1]
+    board[i][j - 1] != '   ' && piece.color != color && piece.class.name == 'Pawn' ? true : false
+  end
+
+  def push_ep_moves(to, board)
+    i, j = to
+    offset = @color == :white ? 1 : -1
+    piece = board[i][j + offset]
+    if board[i][j + offset] != '   ' && piece.color != color && piece.class.name == 'Pawn' && parse_last_moves(piece) == 2
+      if piece.color == :black
+        move = split_move_difference(piece, board)
+      elsif piece.color == :white
+        move = split_move_difference(piece, board)
+      end
+    end
+    move
+  end
+
+  # this method is going off 1 move prior to when it should
+  def toggle_ep(to, board)
+    # p to, @crossed_piece, @ep_move
+    if to == @ep_move
+      board[@crossed_piece[0]][@crossed_piece[1]] = '   '
     end
   end
 
-  def check_side_square(from, board)
-    x, y = from
-    p last_move[0][0], last_move[1]
-    offset = color == :white ? 1 : -1
+  def parse_last_moves(piece)
+    offset = piece.last_move[0][0] - piece.last_move[1][0]
+    offset.abs
+  end
 
-    if color == :white && x == 4
-    #   if board[x][y + 1] != '   ' && piece.color != color && piece.class.name == 'Pawn' 
-    #     puts 'bboys, we got em'.green
-    #   end
-    # elsif color == :black && x == 3
-      # if board[x][y - 1] != '   ' && piece.color != color && piece.class.name == 'Pawn'
-      #   puts 'bboys, we got em'.green
-      # end
+  def split_move_difference(piece, board)
+    move = []
+    p @crossed_piece = address(board, piece)
+    if piece.color == :black
+      move << piece.last_move[1][0] - piece.last_move[0][0]
+      move << piece.last_move[0][1]
+    elsif piece.color == :white
+      move << (piece.last_move[1][0] + piece.last_move[0][0]) / 2
+      move << piece.last_move[0][1]
     end
+    move
+  end
+
+  def address(board, input)
+    board.each_with_index do |subarray, i|
+      j = subarray.index(input)
+      return i, j if j
+    end
+    nil
   end
 end

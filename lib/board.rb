@@ -21,7 +21,6 @@ class Board
   end
 
   def get_active_piece(from)
-    # from = input_to_coords(from)
     x, y = from
     @active_piece = game_board[x][y]
   end
