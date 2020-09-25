@@ -8,6 +8,7 @@ class King < Piece
   def initialize(color)
     @color = color
     @symbol = piece
+    @moved = false
   end
 
   def piece
@@ -25,7 +26,13 @@ class King < Piece
     moves << [x - 1, y + 1]
     moves << [x + 1, y + 1]
     moves << [x - 1, y - 1]
+    check_if_moved(to)
     on_board_moves
+  end
+
+  def check_if_moved(to)
+    i, j = to
+    if @color == :white && to
   end
 
   def on_board_moves(array = @moves)

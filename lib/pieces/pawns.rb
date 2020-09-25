@@ -14,7 +14,7 @@ class Pawn < Piece
     @moved = false
     @ep_move = nil
     @crossed_piece = []
-    super(moves, last_move)
+    super(moves, last_move, moved)
   end
 
   def piece

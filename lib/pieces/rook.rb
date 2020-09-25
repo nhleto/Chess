@@ -8,6 +8,7 @@ class Rook < Piece
   def initialize(color)
     @color = color
     @symbol = piece
+    @moved = false
   end
 
   def piece
@@ -23,7 +24,12 @@ class Rook < Piece
       moves << [x, y + i]
       moves << [x, y - i]
     end
+    check_if_moved(to)
     on_board_moves
+  end
+
+  def check_if_moved(to)
+
   end
 
   def check_moves?(to)
