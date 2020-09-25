@@ -6,7 +6,6 @@ require_relative '../modules/helpermethods'
 
 # pawn clas
 class Pawn < Piece
-  include HelperMethods
   attr_reader :symbol, :color, :moved, :ep_move, :crossed_piece
   def initialize(color)
     @symbol = piece

@@ -4,11 +4,13 @@ require_relative './piece.rb'
 require 'colorize'
 
 class Rook < Piece
-  attr_reader :color, :symbol
+  attr_reader :color, :symbol, :moved
   def initialize(color)
     @color = color
     @symbol = piece
     @moved = false
+    @last_move = []
+    # super(last_move)
   end
 
   def piece
@@ -24,12 +26,18 @@ class Rook < Piece
       moves << [x, y + i]
       moves << [x, y - i]
     end
-    check_if_moved(to)
+    check_if_last_move(to)
+    check_if_moved
     on_board_moves
   end
 
-  def check_if_moved(to)
+  def check_if_last_move(to)
+    @last_move << to
+    @last_move.filter! { |move| !move.nil? }
+  end
 
+  def check_if_moved
+    @moved = true if @last_move.flatten.length > 1
   end
 
   def check_moves?(to)

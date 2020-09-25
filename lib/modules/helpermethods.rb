@@ -1,11 +1,9 @@
 # frozen_string_literal: true
 
-# responsible for pawn promotion, en-passant, and castling
+# responsible for pawn promotion, and castling
 module HelperMethods
   def promote_pawn?(to, piece)
-    if piece.class.name == 'Pawn'
-      pawn_promotion(to, piece)
-    end
+    pawn_promotion(to, piece) if piece.class.name == 'Pawn'
   end
 
   def pawn_promotion_possible?(to, piece)
@@ -57,5 +55,34 @@ module HelperMethods
       puts "\nPlease enter valid input..."
       choose_piece(to)
     end
+  end
+
+  def pieces_moved?
+    pos = ''
+    board.game_board.each_with_index do |row, x|
+      row.each_with_index do |_col, y|
+        piece = board.game_board[x][y]
+        pos = [x, y] if piece != '   ' && piece.class.name == 'Rook' && piece.color == current_player.color && piece.moved == false
+      end
+    end
+    pos
+  end
+
+  def friendly_king
+    pos = ''
+    board.game_board.each_with_index do |row, x|
+      row.each_with_index do |_col, y|
+        piece = board.game_board[x][y]
+        pos = [x, y] if piece != '   ' && piece.class.name == 'King' && piece.color == current_player.color
+      end
+    end
+    pos
+  end
+
+  # decide if I want to take the other rook too (if i need it?) also, whether or not to have return t/f
+  def can_castle?(from, to)
+    rook = pieces_moved?
+    king = friendly_king
+    p rook, king
   end
 end

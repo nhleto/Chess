@@ -32,7 +32,11 @@ class King < Piece
 
   def check_if_moved(to)
     i, j = to
-    if @color == :white && to
+    if @color == :white && to != [7, 4]
+      @moved = true
+    elsif @color == :black && to != [0, 3]
+      @moved = true
+    end
   end
 
   def on_board_moves(array = @moves)
