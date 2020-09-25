@@ -10,7 +10,7 @@ require 'pry'
 # game class is responsbile for game loop and game logic
 class Game
   Player = Struct.new(:name, :color)
-  attr_reader :board, :player1, :player2, :current_player, :answer, :from, :to, :error, :diag_val, :current, :safe_moves
+  attr_reader :board, :player1, :player2, :current_player, :answer, :from, :to, :error, :current, :safe_moves
   include Checkmate
   include Vector
   include BoardCoords
@@ -24,7 +24,6 @@ class Game
     @answer = nil
     @from = nil
     @to = nil
-    @diag_val = nil
     @current = current
     @current_player = player1
     @safe_moves = nil
@@ -75,9 +74,8 @@ class Game
     piece.starting_moves(from, to)
     case piece.class.name
     when 'Pawn'
-      # piece.en_passant(from, board.game_board)
+      piece.en_passant(from, board.game_board)
       legal_move?(from, to, piece) && piece.capture_piece(from, to, board.game_board) ? true : false
-      # binding.pry
     when 'King'
       legal_move?(from, to, piece) ? true : false
     when 'Knight'
@@ -163,14 +161,14 @@ class Game
   def legal_capture?(current, to, piece)
     i, j = to
     if board.game_board[current[0]][current[1]] == board.game_board[i][j] && board.game_board[i][j] != '   '
-      @diag_val = board.game_board[current[0]][current[1]]
-      parse_diag_value(piece)
+      diag_val = board.game_board[current[0]][current[1]]
+      parse_diag_value(piece, diag_val)
     else
       true
     end
   end
 
-  def parse_diag_value(piece)
+  def parse_diag_value(piece, diag_val)
     if diag_val.color != piece.color
       reset_diag_val
       true

@@ -40,7 +40,7 @@ class Pawn < Piece
       moves << [x + 1, y + 1]
       moves << [x + 1, y - 1]
     end
-    check_if_moved(from)
+    check_if_moved(to)
     check_if_double_step(from, to)
     on_board_moves
   end
@@ -68,8 +68,8 @@ class Pawn < Piece
     moves.uniq!
   end
 
-  def check_if_moved(from)
-    x, y = from
+  def check_if_moved(to)
+    x, y = to
     if @color == :white && x != 6
       @moved = true
     elsif @color == :black && x != 1
