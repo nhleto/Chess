@@ -72,7 +72,7 @@ class Game
 
   def valid_piece_move?(from, to, piece)
     piece.starting_moves(from, to)
-    p can_castle?
+    can_castle?
     # p board.game_board
     case piece.class.name
     when 'Pawn'
