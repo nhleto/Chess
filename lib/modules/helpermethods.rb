@@ -57,12 +57,14 @@ module HelperMethods
     end
   end
 
-  def pieces_moved?
+  def rook_position
     pos = ''
     board.game_board.each_with_index do |row, x|
       row.each_with_index do |_col, y|
         piece = board.game_board[x][y]
-        pos = [x, y] if piece != '   ' && piece.class.name == 'Rook' && piece.color == current_player.color && piece.moved == false
+        if piece != '   ' && piece.class.name == 'Rook' && piece.color == current_player.color && piece.moved == false
+          pos = [x, y]
+        end
       end
     end
     pos
@@ -79,10 +81,30 @@ module HelperMethods
     pos
   end
 
+  def space_between_r_k(king_pos, rook_pos)
+    return false if rook_pos.is_a?(String) || king_pos.is_a?(String)
+
+    space = []
+    row = king_pos[0]
+    min = (rook_pos[1] == 7 ? king_pos[1] : rook_pos[1]) + 1
+    max = (rook_pos[1] == 7 ? rook_pos[1] : king_pos[1]) - 1
+    min.upto(max) { |col| space.push([row, col]) }
+    space
+  end
+
+  def between_squares_valid?(squares)
+    return false unless squares
+
+    valid_move = squares.map { |cell| board.game_board[cell[0]][cell[1]] == '   ' }
+    # valid_move.all? { |cell| cell == true }
+  end
+
   # decide if I want to take the other rook too (if i need it?) also, whether or not to have return t/f
-  def can_castle?(from, to)
-    rook = pieces_moved?
-    king = friendly_king
-    p rook, king
+  def can_castle?(_from, _to)
+    rook_pos = rook_position
+    king_pos = friendly_king
+    p squares = space_between_r_k(king_pos, rook_pos)
+    p middle_squares = between_squares_valid?(squares)
+    return true if middle_squares
   end
 end
