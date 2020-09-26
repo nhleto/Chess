@@ -58,12 +58,14 @@ module HelperMethods
   end
 
   def rook_position
-    pos = ''
+    pos = []
     board.game_board.each_with_index do |row, x|
       row.each_with_index do |_col, y|
         piece = board.game_board[x][y]
         if piece != '   ' && piece.class.name == 'Rook' && piece.color == current_player.color && piece.moved == false
-          pos = [x, y]
+          pos << [x, y]
+        elsif piece != '   ' && piece.class.name == 'Rook' && piece.color == current_player.color && piece.moved == false
+          pos << [x, y]
         end
       end
     end
@@ -86,25 +88,53 @@ module HelperMethods
 
     space = []
     row = king_pos[0]
-    min = (rook_pos[1] == 7 ? king_pos[1] : rook_pos[1]) + 1
-    max = (rook_pos[1] == 7 ? rook_pos[1] : king_pos[1]) - 1
-    min.upto(max) { |col| space.push([row, col]) }
-    space
+    if rook_pos.length == 1
+      min1 = (rook_pos[0][1] == 7 ? king_pos[1] : rook_pos[0][1]) + 1
+      max1 = (rook_pos[0][1] == 7 ? rook_pos[0][1] : king_pos[1]) - 1
+      min1.upto(max1) { |col| space.push([row, col]) }
+    # queenside spaces
+    elsif rook_pos.length > 1
+      min1 = (rook_pos[0][1] == 7 ? king_pos[1] : rook_pos[0][1]) + 1
+      max1 = (rook_pos[0][1] == 7 ? rook_pos[0][1] : king_pos[1]) - 1
+      min = (rook_pos[1][1] == 7 ? king_pos[1] : rook_pos[1][1]) + 1
+      max = (rook_pos[1][1] == 7 ? rook_pos[1][1] : king_pos[1]) - 1
+      min.upto(max) { |col| space.push([row, col]) }
+      min1.upto(max1) { |col| space.push([row, col]) }
+    end
+    p space
   end
 
   def between_squares_valid?(squares)
     return false unless squares
 
-    valid_move = squares.map { |cell| board.game_board[cell[0]][cell[1]] == '   ' }
-    # valid_move.all? { |cell| cell == true }
+    # p squares
+    if squares.length == 2
+      king_side = squares[0, 1] + squares[1, 1]
+      valid_move_king_side = king_side.map { |cell| board.game_board[cell[0]][cell[1]] == '   ' }
+      valid_move_king_side.all? { |cell| cell == true } # this line is not returning t/f
+    elsif squares.length > 2
+      # king_side = squares[0, 1] + squares[1, 1] # I dont think this even fits in here / why need to check queen and king at same time
+      p queenside = squares[2, 2] + squares[4, 4]
+      valid_move_queen_side = queenside.map { |cell| board.game_board[cell[0]][cell[1]] == '   ' }
+      valid_move_queen_side.all? { |cell| cell == true }
+    end
   end
 
-  # decide if I want to take the other rook too (if i need it?) also, whether or not to have return t/f
-  def can_castle?(_from, _to)
+  # this method seems to be placing moves in their regarless of whether or not [between_sqaures_valid] returns t / f
+  def get_castle_moves(rook_pos, king_pos)
+    moves = []
+    rook_pos
+    row = king_pos[0]
+    col = rook_pos[1][1] == 7 ? 6 : 2
+    king = board.game_board[king_pos[0]][king_pos[1]]
+    king.moves.push([row, col])
+  end
+
+  def can_castle?
     rook_pos = rook_position
     king_pos = friendly_king
-    p squares = space_between_r_k(king_pos, rook_pos)
-    p middle_squares = between_squares_valid?(squares)
-    return true if middle_squares
+    squares = space_between_r_k(king_pos, rook_pos)
+    p middle_squares = between_squares_valid?(squares) # weird ouput
+    get_castle_moves(rook_pos, king_pos) if middle_squares # moves are being pushed because this isn't returning t / f ??
   end
 end
