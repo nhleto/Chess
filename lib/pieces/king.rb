@@ -4,10 +4,11 @@ require_relative './piece.rb'
 require 'colorize'
 
 class King < Piece
-  attr_reader :symbol, :color
+  attr_reader :symbol, :color, :moves, :moved, :last_move
   def initialize(color)
     @color = color
     @symbol = piece
+    @last_move = []
     @moved = false
   end
 
@@ -26,17 +27,18 @@ class King < Piece
     moves << [x - 1, y + 1]
     moves << [x + 1, y + 1]
     moves << [x - 1, y - 1]
-    check_if_moved(to)
+    check_if_last_move(to)
+    check_if_moved
     on_board_moves
   end
 
-  def check_if_moved(to)
-    i, j = to
-    if @color == :white && to != [7, 4]
-      @moved = true
-    elsif @color == :black && to != [0, 3]
-      @moved = true
-    end
+  def check_if_last_move(to)
+    @last_move << to
+    @last_move.filter! { |move| !move.nil? }
+  end
+
+  def check_if_moved
+    @moved = true if @last_move.flatten.length > 1
   end
 
   def on_board_moves(array = @moves)

@@ -10,10 +10,10 @@ require 'pry'
 # game class is responsbile for game loop and game logic
 class Game
   Player = Struct.new(:name, :color)
-  attr_reader :board, :player1, :player2, :current_player, :answer, :from, :to, :error, :current, :safe_moves
+  attr_reader :board, :player1, :player2, :current_player, :answer, :black_rook_pos, :black_castle_moved,
+              :from, :to, :error, :safe_moves, :new_rook_pos, :castle_moves, :current
   include Checkmate
   include Vector
-  include BoardCoords
   include HelperMethods
   def initialize
     @player1 = Player.new('Henry', :white)
@@ -21,12 +21,15 @@ class Game
     @board = Board.new
     @error = Error.new
     @current_player = nil
-    @answer = nil
     @from = nil
     @to = nil
     @current = current
     @current_player = player1
     @safe_moves = nil
+    @new_rook_pos = []
+    @white_castle_moves = []
+    @black_rook_pos = []
+    @black_castle_moves = []
   end
 
   # TODO: create set_players and intro_text
@@ -63,19 +66,18 @@ class Game
     piece = board.get_active_piece(from)
     validate_turn(from, piece)
     valid_piece_move?(from, to, piece) ? board.make_move(from, to) : valid_move_false(from, to)
+    # binding.pry
     # board.make_move(from, to)
     puts_king_in_check?(from, to)
     # p legal_king_moves(king_position, to)
     still_in_check(from, to)
     pawn_promotion_possible?(to, piece)
-    can_castle?
-    # binding.pry
+    check_castle
   end
 
   def valid_piece_move?(from, to, piece)
     piece.starting_moves(from, to)
-    p piece.moves
-    # p board.game_board
+    can_castle?
     case piece.class.name
     when 'Pawn'
       piece.en_passant(from, to, board.game_board)

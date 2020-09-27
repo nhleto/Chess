@@ -20,6 +20,10 @@ class Board
     @active_piece = active_piece
   end
 
+  def check_moved(piece)
+    piece.moved
+  end
+
   def get_active_piece(from)
     x, y = from
     @active_piece = game_board[x][y]
@@ -56,7 +60,7 @@ class Board
   end
 
   def from_nil(from, to)
-    # return false if from == to
+    return false if from == to
 
     start_x, start_y = from
     @game_board[start_x][start_y] = '   '
@@ -118,7 +122,7 @@ class Board
   def populate_array(board)
     8.times do |i|
       # board[6][i] = Pawn.new(:white)
-      board[1][i] = Pawn.new(:black)
+      # board[1][i] = Pawn.new(:black)
     end
     board[7][0] = Rook.new(:white)
     board[7][7] = Rook.new(:white)
@@ -127,13 +131,13 @@ class Board
 
     # board[7][1] = Knight.new(:white)
     # board[7][6] = Knight.new(:white)
-    board[0][1] = Knight.new(:black)
-    board[0][6] = Knight.new(:black)
+    # board[0][1] = Knight.new(:black)
+    # board[0][6] = Knight.new(:black)
 
     # board[7][2] = Bishop.new(:white)
     board[7][5] = Bishop.new(:white)
     board[0][2] = Bishop.new(:black)
-    board[0][5] = Bishop.new(:black)
+    # board[0][5] = Bishop.new(:black)
 
     board[7][3] = Queen.new(:white)
     board[7][4] = King.new(:white)
