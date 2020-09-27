@@ -68,11 +68,13 @@ class Game
     # p legal_king_moves(king_position, to)
     still_in_check(from, to)
     pawn_promotion_possible?(to, piece)
+    can_castle?
+    # binding.pry
   end
 
   def valid_piece_move?(from, to, piece)
     piece.starting_moves(from, to)
-    can_castle?
+    p piece.moves
     # p board.game_board
     case piece.class.name
     when 'Pawn'
@@ -81,6 +83,7 @@ class Game
       legal_move?(from, to, piece) && piece.capture_piece(from, to, board.game_board) ? true : false
     when 'King'
       legal_move?(from, to, piece) ? true : false
+      # binding.pry
     when 'Knight'
       validate_knight?(to, piece) && piece.check_moves?(to) ? true : false
     else

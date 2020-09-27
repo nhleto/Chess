@@ -86,7 +86,6 @@ module HelperMethods
   def space_between_r_k(king_pos, rook_pos)
     return false if rook_pos.is_a?(String) || king_pos.is_a?(String)
 
-    p rook_pos
     space = []
     row = king_pos[0]
     if rook_pos.length > 1
@@ -103,11 +102,9 @@ module HelperMethods
   def kingside_valid?(squares, rook_pos, king_pos)
     return false if !squares || squares == []
 
-    p squares
     king_side = squares[0, 1] + squares[1, 1]
     valid_move_king_side = king_side.map { |cell| board.game_board[cell[0]][cell[1]] == '   ' }
     if valid_move_king_side.all? { |cell| cell == true }
-      p rook_pos
       get_castle_moves(rook_pos[1], king_pos)
     end
   end
@@ -118,7 +115,6 @@ module HelperMethods
     queenside = squares[2, 2] + squares[4, 4]
     valid_move_queen_side = queenside.map { |cell| board.game_board[cell[0]][cell[1]] == '   ' }
     if valid_move_queen_side.all? { |cell| cell == true }
-      p rook_pos[0]
       get_castle_moves(rook_pos[0], king_pos)
     end
   end
@@ -126,22 +122,41 @@ module HelperMethods
   # this method seems to be placing moves in their regarless of whether or not [between_sqaures_valid] returns t / f
   def get_castle_moves(rook_pos, king_pos)
     moves = []
+    from = board.input_to_coords(@from)
+    to = board.input_to_coords(@to)
     row = king_pos[0]
     col = rook_pos[1] == 7 ? 6 : 2
     king = board.game_board[king_pos[0]][king_pos[1]]
-    p king.moves << [row, col]
+    king.starting_moves(from, to)
+    king.moves << [row, col] # moves are not being pushed to king.moves ???????
+    moves << [row, col]
+    did_king_castle(moves, rook_pos)
   end
 
   def can_castle?
     rook_pos = rook_position
     king_pos = friendly_king
     squares = space_between_r_k(king_pos, rook_pos)
-    p king_side = kingside_valid?(squares, rook_pos, king_pos) # the rook moves one piece to the
-    p queenside = queenside_valid?(squares, rook_pos, king_pos) # the rook will need to move to where the queen starts
-    # p get_castle_moves(rook_pos, king_pos) if middle_squares # moves are being pushed because this isn't returning t / f ??
+    king_side = kingside_valid?(squares, rook_pos, king_pos)
+    queenside = queenside_valid?(squares, rook_pos, king_pos)
   end
 
-  def spawn_new_rook(king_pos)
-    
+  def did_king_castle(moves, rook_pos)
+    to = board.input_to_coords(@to)
+    move = moves.flatten
+    new_rook_pos = []
+    row = rook_pos[0]
+    col = rook_pos[1] == 7 ? 5 : 3
+    new_rook_pos << row
+    new_rook_pos << col
+    return unless to == move
+
+    board.game_board[rook_pos[0]][rook_pos[1]] = '   '
+    board.game_board[row][col] = Rook.new(current_player.color)
+  end
+
+  def spawn_new_rook(king)
+  #   if king_position == [7, 6] || king_position == [7, 2] || king_position == [0, 2] || king_position == [0, 6]
+
   end
 end
