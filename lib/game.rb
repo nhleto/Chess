@@ -5,13 +5,16 @@ require_relative './error'
 require_relative './modules/vector'
 require_relative './modules/checkmate'
 require_relative './modules/helpermethods'
+require_relative './modules/savestate'
+require 'yaml'
 require 'pry'
 
 # game class is responsbile for game loop and game logic
 class Game
   Player = Struct.new(:name, :color)
-  attr_reader :board, :player1, :player2, :current_player, :answer, :black_rook_pos, :black_castle_moved,
+  attr_reader :board, :player1, :player2, :current_player, :answer, :black_rook_pos,
               :from, :to, :error, :safe_moves, :new_rook_pos, :castle_moves, :current
+  include SaveStates
   include Checkmate
   include Vector
   include HelperMethods
@@ -27,15 +30,15 @@ class Game
     @current_player = player1
     @safe_moves = nil
     @new_rook_pos = []
-    @white_castle_moves = []
+    @castle_moves = nil
     @black_rook_pos = []
-    @black_castle_moves = []
   end
 
   # TODO: create set_players and intro_text
   def start_game
     # set_players
     # intro_text
+    game_states
     play_game
   end
 
@@ -45,6 +48,7 @@ class Game
       check_if_checkmate?
       check_if_pawn_checkmate?
       check? ? in_check(current_player) : false
+      save_game
       puts "\n#{current_player.name}, make a move"
       set_move
       turn_switcher
@@ -381,4 +385,4 @@ class Game
 end
 
 chess = Game.new
-chess.play_game
+chess.start_game
