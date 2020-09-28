@@ -19,11 +19,12 @@ module SaveStates
     puts "\nIf you would like to start a new game, press 1\n\nIf you would like to load an old game, press 2"
     mode = gets.chomp.to_i until mode == 1 || mode == 2
     if Dir.empty?('savefiles')
-      abort 'No saved games'
+      puts 'No saved games'
+      mode = 1
     end
 
     if mode == 1
-      puts 'New game? Begin!'
+      puts 'Begin new game!'
       play_game
     else
       load_game

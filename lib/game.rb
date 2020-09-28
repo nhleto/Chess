@@ -6,6 +6,7 @@ require_relative './modules/vector'
 require_relative './modules/checkmate'
 require_relative './modules/helpermethods'
 require_relative './modules/savestate'
+require_relative './modules/title'
 require 'yaml'
 require 'pry'
 
@@ -13,11 +14,12 @@ require 'pry'
 class Game
   Player = Struct.new(:name, :color)
   attr_reader :board, :player1, :player2, :current_player, :answer, :black_rook_pos,
-              :from, :to, :error, :safe_moves, :new_rook_pos, :castle_moves, :current
+              :from, :to, :error, :safe_moves, :new_rook_pos, :castle_moves, :current, :final
   include SaveStates
   include Checkmate
   include Vector
   include HelperMethods
+  include TitleDisplay
   def initialize
     @player1 = Player.new('Henry', :white)
     @player2 = Player.new('Sarah', :black)
@@ -32,13 +34,14 @@ class Game
     @new_rook_pos = []
     @castle_moves = nil
     @black_rook_pos = []
+    @final = []
   end
 
   # TODO: create set_players and intro_text
   def start_game
     # set_players
     # intro_text
-    game_states
+    # game_states
     play_game
   end
 
@@ -46,11 +49,13 @@ class Game
     loop do
       board.display_board
       check_if_checkmate?
+      parse_final
       check_if_pawn_checkmate?
       check? ? in_check(current_player) : false
-      save_game
+      # save_game
       puts "\n#{current_player.name}, make a move"
       set_move
+      # final_reset
       turn_switcher
     end
   end
@@ -69,13 +74,13 @@ class Game
     # p checking_piece(from)
     piece = board.get_active_piece(from)
     validate_turn(from, piece)
-    valid_piece_move?(from, to, piece) ? board.make_move(from, to) : valid_move_false(from, to)
+    # valid_piece_move?(from, to, piece) ? board.make_move(from, to) : valid_move_false(from, to)
     # binding.pry
-    # board.make_move(from, to)
+    board.make_move(from, to)
     puts_king_in_check?(from, to)
     # p legal_king_moves(king_position, to)
     still_in_check(from, to)
-    pawn_promotion_possible?(to, piece)
+    promote_pawn?(to, piece)
     check_castle
   end
 
@@ -89,7 +94,6 @@ class Game
       legal_move?(from, to, piece) && piece.capture_piece(from, to, board.game_board) ? true : false
     when 'King'
       legal_move?(from, to, piece) ? true : false
-      # binding.pry
     when 'Knight'
       validate_knight?(to, piece) && piece.check_moves?(to) ? true : false
     else
@@ -108,12 +112,11 @@ class Game
       row.each_with_index do |_col, y|
         piece = board.game_board[x][y]
         from = x, y
-        unless piece != '   ' && piece.color == current_player.color && piece.class.name != 'Pawn' && piece.class.name != 'King'
+        unless piece != '   ' && piece.color == current_player.color # got rid of king / pawn exclusions. we will see if good or bad idea
           next
         end
 
-        p final_mate?(from_1, piece_1, all_possible_moves)
-
+        @final << final_mate?(from_1, piece_1, all_possible_moves)
         piece&.starting_moves(from, _to = nil)
         possible_moves = piece.moves.uniq
         until possible_moves.empty?
@@ -129,7 +132,16 @@ class Game
 
   # uses checkmate helper methods to see if there are any valid moves out of check. if not, it is mate.
   def final_mate?(from1, piece1, all_possible_moves)
-    !block_check?(piece1, from1, all_possible_moves) && !can_take_piece?(all_possible_moves, from1) && @safe_moves == 0
+    !block_check?(piece1, from1, all_possible_moves) && !can_take_piece?(all_possible_moves, from1)
+  end
+
+  def parse_final
+    p @final
+    @final.all?(true) && !@final.empty? ? mate : false
+  end
+
+  def final_reset
+    @final = []
   end
 
   def checkmate_message
@@ -140,7 +152,7 @@ class Game
   # ensures that subsequent move does not put king in check
   def puts_king_in_check?(from, to)
     if check?
-      legal_king_moves(from, to = nil)
+      legal_king_moves(from, to)
       error.bad_check_move(current_player)
       board.make_move(to, from)
       play_game
@@ -157,7 +169,6 @@ class Game
     @current = []
     @current << (x + direction_x)
     @current << (y + direction_y)
-
     until current == to
 
       return false if board.game_board[current[0]][current[1]] != '   '

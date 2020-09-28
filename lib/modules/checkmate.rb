@@ -2,7 +2,8 @@
 
 # checkmate responsibilities
 module Checkmate
-  def potential_blockers(_piece1, from1, all_possible_moves)
+  def potential_blockers(piece1, from1, all_possible_moves)
+    # p piece1
     king_pos = king_position
     btwn_squares = between_squares(king_pos, from1)
     blockers = btwn_squares&.select { |move| all_possible_moves.include?(move) }
@@ -91,23 +92,23 @@ module Checkmate
     reject_moves = []
     safe_moves = []
     poss_moves.each do |move|
-      board.move_it(king_position, move) unless board.game_board
-      if check?
+      if board.move_it(king_position, move) && check?
         reject_moves << move
-        # board.to_nil(king_position, move)
-      elsif !check?
+        board.to_nil(king_position, move)
+      elsif board.move_it(king_position, move) && !check?
         safe_moves << move
+        board.to_nil(king_position, move)
       end
     end
-    puts "safe moves are #{safe_moves}"
-    puts "shit moves are #{reject_moves}"
+
+    # puts "safe moves are #{safe_moves}".green
+    # puts "shit moves are #{reject_moves}".yellow
     board.make_move(king_position, king_position1)
-    if safe_moves.length.zero? # this keeps breaking the game!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      @safe_moves = 0
-      true
-    else
-      false
-    end
+    safe_moves?(safe_moves)
+  end
+
+  def safe_moves?(safe_moves)
+    safe_moves.length.zero? ? @safe_moves = 0 : false
   end
 
   def legal_possible_move(king_position, king, possible_moves)

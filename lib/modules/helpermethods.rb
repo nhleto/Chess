@@ -6,14 +6,14 @@ module HelperMethods
     pawn_promotion(to, piece) if piece.class.name == 'Pawn'
   end
 
-  def pawn_promotion_possible?(to, piece)
-    i, j = to
-    if piece.color == :white && i.zero?
-      pawn_promotion(to, piece)
-    elsif piece.color == :black && i == 7
-      pawn_promotion(to, piece)
-    end
-  end
+  # def pawn_promotion_possible?(to, piece)
+  #   i, j = to
+  #   if piece.color == :white && i.zero?
+  #     pawn_promotion(to, piece)
+  #   elsif piece.color == :black && i == 7
+  #     pawn_promotion(to, piece)
+  #   end
+  # end
 
   def pawn_promotion(to, piece)
     i, j = to
