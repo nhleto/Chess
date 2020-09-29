@@ -72,8 +72,8 @@ class Game
   def vet_piece_move?(from, to)
     piece = board.get_active_piece(from)
     validate_turn(from, piece)
-    # valid_piece_move?(from, to, piece) ? board.make_move(from, to) : valid_move_false(from, to)
-    board.make_move(from, to)
+    valid_piece_move?(from, to, piece) ? board.make_move(from, to) : valid_move_false(from, to)
+    # board.make_move(from, to)
     puts_king_in_check?(from, to)
     still_in_check(from, to)
     promote_pawn?(to, piece)
@@ -89,9 +89,9 @@ class Game
       piece.toggle_ep(to, board.game_board)
       legal_move?(from, to, piece) && piece.capture_piece(from, to, board.game_board) ? true : false
     when 'King'
-      legal_move?(from, to, piece) ? true : false
+      legal_move?(from, to, piece) ? true : false # TODO: get rid of this line / 'King'
     when 'Knight'
-      validate_knight?(to, piece) && piece.check_moves?(to) ? true : false
+      piece.validate_knight?(to, board.game_board) && piece.check_moves?(to) ? true : false
     else
       legal_move?(from, to, piece) ? true : false
     end
@@ -213,25 +213,9 @@ class Game
 
   def parse_diag_value(piece, diag_val)
     if diag_val.color != piece.color
-      reset_diag_val
       true
     elsif diag_val.color == piece.color
-      reset_diag_val
       false
-    end
-  end
-
-  def validate_knight?(to, piece)
-    i, j = to
-    if board.game_board[i][j] != '   '
-      destination = board.game_board[i][j]
-      if destination.color != piece.color
-        true
-      elsif destination.color == piece.color
-        false
-      end
-    else
-      true
     end
   end
 
@@ -297,7 +281,6 @@ class Game
         possible_check_moves = check_king(player_king_pos, possible_moves)
         until possible_check_moves.empty?
           to = possible_check_moves.first
-          # checkmate?(from, piece)
           return true if valid_piece_move?(from, to, piece)
 
           possible_check_moves.shift
@@ -386,10 +369,6 @@ class Game
     @current_player = @current_player == player1 ? player2 : player1
   end
 
-  def reset_diag_val
-    @diag_val = nil
-  end
-
   def from_equals_to?(from, to)
     return false if from == to
   end
@@ -415,5 +394,5 @@ class Game
   end
 end
 
-# chess = Game.new
-# chess.start_game
+chess = Game.new
+chess.start_game

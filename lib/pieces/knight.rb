@@ -39,4 +39,18 @@ class Knight < Piece
   def check_moves?(to)
     @moves.include?(to)
   end
+
+  def validate_knight?(to, board)
+    i, j = to
+    if board[i][j] != '   '
+      destination = board[i][j]
+      if destination.color != color
+        true
+      elsif destination.color == color
+        false
+      end
+    else
+      true
+    end
+  end
 end
