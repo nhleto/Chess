@@ -8,8 +8,8 @@ require_relative '../modules/helpermethods'
 class Pawn < Piece
   attr_reader :symbol, :color, :moved, :ep_move, :crossed_piece
   def initialize(color)
-    @symbol = piece
     @color = color
+    @symbol = piece
     @moved = false
     @ep_move = nil
     @crossed_piece = []
@@ -17,7 +17,7 @@ class Pawn < Piece
   end
 
   def piece
-    @color == :white ? ' P ' : " \u265F "
+    @color == :white ? " \u2659 " : " \u265F "
   end
 
   def starting_moves(from, to)

@@ -38,19 +38,6 @@ class Board
     BoardCoords.create_coord(input)
   end
 
-  # move this method to the game class. Make game class responsible for game logic
-  def valid_move_for_piece?(from_coord, to_coord, piece)
-    case piece.name
-    when 'Pawn'
-      if piece.starting_moves(from_coord, to_coord)
-        make_move(from, to)
-      else
-        error.pawn_movement
-        game.move_to # is there a a better way to do this?
-      end
-    end
-  end
-
   def move_it(from, to)
     return false if from == to
 
@@ -121,21 +108,21 @@ class Board
 
   def populate_array(board)
     8.times do |i|
-      # board[6][i] = Pawn.new(:white)
-      # board[1][i] = Pawn.new(:black)
+      board[6][i] = Pawn.new(:white)
+      board[1][i] = Pawn.new(:black)
     end
-    # board[7][0] = Rook.new(:white)
-    # board[7][7] = Rook.new(:white)
+    board[7][0] = Rook.new(:white)
+    board[7][7] = Rook.new(:white)
     board[0][0] = Rook.new(:black)
     board[0][7] = Rook.new(:black)
 
-    # board[7][1] = Knight.new(:white)
-    # board[7][6] = Knight.new(:white)
+    board[7][1] = Knight.new(:white)
+    board[7][6] = Knight.new(:white)
     board[0][1] = Knight.new(:black)
     board[0][6] = Knight.new(:black)
 
-    # board[7][2] = Bishop.new(:white)
-    # board[7][5] = Bishop.new(:white)
+    board[7][2] = Bishop.new(:white)
+    board[7][5] = Bishop.new(:white)
     board[0][2] = Bishop.new(:black)
     board[0][5] = Bishop.new(:black)
 
@@ -161,4 +148,3 @@ class Board
     populate_array(@game_board)
   end
 end
-

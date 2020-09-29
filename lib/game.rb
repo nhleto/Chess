@@ -21,8 +21,8 @@ class Game
   include HelperMethods
   include TitleDisplay
   def initialize
-    @player1 = Player.new('Henry', :white)
-    @player2 = Player.new('Sarah', :black)
+    @player1 = Player.new(:name, :white)
+    @player2 = Player.new(:name, :black)
     @board = Board.new
     @error = Error.new
     @current_player = nil
@@ -39,7 +39,7 @@ class Game
 
   # TODO: create set_players and intro_text
   def start_game
-    # set_players
+    set_players
     # intro_text
     # game_states
     play_game
@@ -55,7 +55,6 @@ class Game
       # save_game
       puts "\n#{current_player.name}, make a move"
       set_move
-      # final_reset
       turn_switcher
     end
   end
@@ -71,14 +70,11 @@ class Game
   end
 
   def vet_piece_move?(from, to)
-    # p checking_piece(from)
     piece = board.get_active_piece(from)
     validate_turn(from, piece)
     # valid_piece_move?(from, to, piece) ? board.make_move(from, to) : valid_move_false(from, to)
-    # binding.pry
     board.make_move(from, to)
     puts_king_in_check?(from, to)
-    # p legal_king_moves(king_position, to)
     still_in_check(from, to)
     promote_pawn?(to, piece)
     check_castle
@@ -90,7 +86,7 @@ class Game
     case piece.class.name
     when 'Pawn'
       piece.en_passant(from, to, board.game_board)
-      piece.toggle_ep(to, board.game_board) # f around with this
+      piece.toggle_ep(to, board.game_board)
       legal_move?(from, to, piece) && piece.capture_piece(from, to, board.game_board) ? true : false
     when 'King'
       legal_move?(from, to, piece) ? true : false
@@ -103,6 +99,30 @@ class Game
 
   def legal_move?(from, to, piece)
     check_if_piece_in_way?(from, to, piece) && piece.check_moves?(to) && legal_capture?(current, to, piece) ? true : false
+  end
+
+  def set_players
+    puts "\nPlayer 1, please enter your name...".green
+    player1.name = set_name
+    puts "\nPlayer 2, please enter your name...".green
+    player2.name = set_name
+    puts "\nWelcome, #{player1.name} and #{player2.name}!".green
+    sleep(2)
+  end
+
+  def set_name
+    user_input = gets.chomp
+    loop do
+      break if valid_name?(user_input)
+
+      error.name_error
+      user_input = gets.chomp
+    end
+    user_input
+  end
+
+  def valid_name?(user_input)
+    user_input.match?(/^[a-zA-Z0-9]+$/)
   end
 
   # take the moves generated from check
@@ -136,7 +156,7 @@ class Game
   end
 
   def parse_final
-    p @final
+    # p @final
     @final.all?(true) && !@final.empty? ? mate : false
   end
 
@@ -395,5 +415,5 @@ class Game
   end
 end
 
-chess = Game.new
-chess.start_game
+# chess = Game.new
+# chess.start_game
