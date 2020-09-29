@@ -394,5 +394,5 @@ class Game
   end
 end
 
-chess = Game.new
-chess.start_game
+# chess = Game.new
+# chess.start_game

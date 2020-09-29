@@ -99,7 +99,7 @@ class Pawn < Piece
       elsif destination.color == color
         false
       end
-    elsif capture_moves(from, to) # this method is the en_passant problem // i think its fixed now. changed return value to 'true'
+    elsif capture_moves(from, to)
       true
     else
       true
@@ -129,7 +129,7 @@ class Pawn < Piece
     capture_moves << [x + 1, y - 1]
 
     on_board_moves(capture_moves)
-
+    p capture_moves
     capture_moves.include?(to) && to != color ? true : false
   end
 
@@ -174,9 +174,7 @@ class Pawn < Piece
     move
   end
 
-  # this method is going off 1 move prior to when it should
   def toggle_ep(to, board)
-    # p to, @crossed_piece, @ep_move
     if to == @ep_move
       board[@crossed_piece[0]][@crossed_piece[1]] = '   '
     end
