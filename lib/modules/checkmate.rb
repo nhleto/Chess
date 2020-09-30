@@ -123,4 +123,15 @@ module Checkmate
     end
     potential_moves
   end
+
+  def enemy_king_pos
+    pos = ''
+    board.game_board.each_with_index do |row, x|
+      row.each_with_index do |_col, y|
+        piece = board.game_board[x][y]
+        pos = [x, y] if piece != '   ' && piece.class.name == 'King' && piece.color != current_player.color
+      end
+    end
+    pos
+  end
 end

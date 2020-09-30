@@ -39,9 +39,9 @@ class Game
 
   # TODO: create set_players and intro_text
   def start_game
+    intro_text_one
     set_players
-    # intro_text
-    # game_states
+    game_states
     play_game
   end
 
@@ -52,7 +52,7 @@ class Game
       parse_final
       check_if_pawn_checkmate?
       check? ? in_check(current_player) : false
-      # save_game
+      save_game
       puts "\n#{current_player.name}, make a move"
       set_move
       turn_switcher
@@ -78,6 +78,7 @@ class Game
     still_in_check(from, to)
     promote_pawn?(to, piece)
     check_castle
+    king_captured
   end
 
   def valid_piece_move?(from, to, piece)
@@ -88,8 +89,6 @@ class Game
       piece.en_passant(from, to, board.game_board)
       piece.toggle_ep(to, board.game_board)
       legal_move?(from, to, piece) && piece.capture_piece(from, to, board.game_board) ? true : false
-    when 'King'
-      legal_move?(from, to, piece) ? true : false # TODO: get rid of this line / 'King'
     when 'Knight'
       piece.validate_knight?(to, board.game_board) && piece.check_moves?(to) ? true : false
     else
@@ -265,7 +264,19 @@ class Game
 
   def mate
     puts "CHECKMATE. #{opponent.name} is the winner and the game is over.".green
-    exit
+    replay_options
+  end
+
+  def replay_options
+    puts "\nWould you like to play again? Y/N?"
+    input = gets.chomp.upcase until input == 'Y' || input == 'N'
+    if input == 'Y'
+      board.reset_board
+      play_game
+    else
+      puts 'Cya!'.green
+      exit
+    end
   end
 
   def double_check?
@@ -392,7 +403,11 @@ class Game
   def input_check?(input)
     input.split('').length == 2 && input[0].match?(/[a-h]/) && input[1].match?(/[1-8]/)
   end
+
+  def king_captured
+    enemy_king_pos == '' ? mate : false
+  end
 end
 
-# chess = Game.new
-# chess.start_game
+chess = Game.new
+chess.start_game

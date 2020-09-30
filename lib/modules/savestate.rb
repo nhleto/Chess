@@ -20,7 +20,7 @@ module SaveStates
     mode = gets.chomp.to_i until mode == 1 || mode == 2
     if Dir.empty?('savefiles')
       puts 'No saved games'
-      mode = 1
+      play_game
     end
 
     if mode == 1

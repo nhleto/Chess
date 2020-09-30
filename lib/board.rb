@@ -96,8 +96,6 @@ class Board
     put_board(board)
   end
 
-  private
-
   def paint_bg_1(square)
     square == '   ' ? square.colorize(background: :blue) : square.symbol.colorize(background: :blue)
   end
@@ -141,6 +139,10 @@ class Board
     end
     puts "\t  " + coords.join(' ')
     puts "\n\n"
+  end
+
+  def reset_board
+    setup
   end
 
   def setup
