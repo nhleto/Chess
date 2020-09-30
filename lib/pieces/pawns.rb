@@ -118,6 +118,7 @@ class Pawn < Piece
 
   # if a capture move takes an enemy piece / return true. else , return false
   def capture_moves(from, to)
+    # p from, to
     x, y = from
     i, j = to
     capture_moves = []
@@ -129,7 +130,6 @@ class Pawn < Piece
     capture_moves << [x + 1, y - 1]
 
     on_board_moves(capture_moves)
-    p capture_moves
     capture_moves.include?(to) && to != color ? true : false
   end
 
@@ -187,7 +187,7 @@ class Pawn < Piece
 
   def split_move_difference(piece, board)
     move = []
-    p @crossed_piece = address(board, piece)
+    @crossed_piece = address(board, piece)
     if piece.color == :black
       move << piece.last_move[1][0] - piece.last_move[0][0]
       move << piece.last_move[0][1]
