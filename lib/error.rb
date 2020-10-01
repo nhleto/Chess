@@ -31,4 +31,8 @@ class Error
   def bad_check_move(current_player)
     puts "\n#{current_player.name}, that move puts you in check. You cannot move there...".yellow
   end
+
+  def name_error
+    puts "\nPlease enter a valid name".yellow
+  end
 end
