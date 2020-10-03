@@ -39,8 +39,8 @@ class Game
 
   # TODO: create set_players and intro_text
   def start_game
-    intro_text_one
-    set_players
+    # intro_text_one
+    # set_players
     game_states
     play_game
   end
@@ -79,6 +79,7 @@ class Game
     promote_pawn?(to, piece)
     check_castle
     king_captured
+    final_reset
   end
 
   def valid_piece_move?(from, to, piece)
@@ -131,8 +132,7 @@ class Game
       row.each_with_index do |_col, y|
         piece = board.game_board[x][y]
         from = x, y
-        unless piece != '   ' && piece.color == current_player.color # got rid of king / pawn exclusions. we will see if good or bad idea
-          next
+        unless piece != '   ' && piece.color == current_player.color
         end
 
         @final << final_mate?(from_1, piece_1, all_possible_moves)
@@ -146,7 +146,6 @@ class Game
         end
       end
     end
-    # false
   end
 
   # uses checkmate helper methods to see if there are any valid moves out of check. if not, it is mate.
@@ -155,8 +154,7 @@ class Game
   end
 
   def parse_final
-    # p @final
-    @final.all?(true) && !@final.empty? ? mate : false
+    @final.all?(true) && !@final.empty? ? mate : final_reset
   end
 
   def final_reset
