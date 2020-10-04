@@ -69,8 +69,8 @@ class Game
   def vet_piece_move?(from, to)
     piece = board.get_active_piece(from)
     validate_turn(from, piece)
-    valid_piece_move?(from, to, piece) ? board.make_move(from, to) : valid_move_false(from, to)
-    # board.make_move(from, to)
+    # valid_piece_move?(from, to, piece) ? board.make_move(from, to) : valid_move_false(from, to)
+    board.make_move(from, to)
     puts_king_in_check?(from, to)
     still_in_check(from, to)
     promote_pawn?(to, piece)
@@ -82,8 +82,6 @@ class Game
   def valid_piece_move?(from, to, piece)
     piece.starting_moves(from, to)
     can_castle?
-
-    p piece
     case piece.class.name
     when 'Pawn'
       piece.en_passant(from, to, board.game_board)
@@ -153,16 +151,16 @@ class Game
   end
 
   def parse_final
-    @final.all?(true) && !@final.empty? ? mate : final_reset
+    if @final.all?(true) && !@final.empty?
+      final_reset
+      mate
+    else
+      final_reset
+    end
   end
 
   def final_reset
     @final = []
-  end
-
-  def checkmate_message
-    opponent = current_player == @player1 ? @player2 : @player1
-    puts "\n#{current_player.name} has been mated. #{opponent.name} is the winner!".green
   end
 
   # ensures that subsequent move does not put king in check
@@ -270,6 +268,7 @@ class Game
     if input == 'Y'
       board.reset_board
       play_game
+      # @final = false
     else
       puts 'Cya!'.green
       exit

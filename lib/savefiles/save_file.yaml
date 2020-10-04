@@ -1,9 +1,9 @@
 --- !ruby/object:Game
-player1: &2 !ruby/struct:Game::Player
-  name: hen
+player1: &1 !ruby/struct:Game::Player
+  name: sdf
   color: :white
 player2: !ruby/struct:Game::Player
-  name: sar
+  name: fgh
   color: :black
 board: !ruby/object:Board
   game_board:
@@ -242,103 +242,6 @@ board: !ruby/object:Board
       - - 0
         - 0
   - - "   "
-    - !ruby/object:Pawn
-      color: :black
-      symbol: " ♟ "
-      moved: false
-      ep_move: 
-      crossed_piece: []
-      moves: 
-      last_move: []
-    - !ruby/object:Pawn
-      color: :black
-      symbol: " ♟ "
-      moved: false
-      ep_move: 
-      crossed_piece: []
-      moves: 
-      last_move: []
-    - "   "
-    - !ruby/object:Pawn
-      color: :black
-      symbol: " ♟ "
-      moved: false
-      ep_move: 
-      crossed_piece: []
-      moves: 
-      last_move: []
-    - "   "
-    - !ruby/object:Pawn
-      color: :black
-      symbol: " ♟ "
-      moved: false
-      ep_move: 
-      crossed_piece: []
-      moves: 
-      last_move: []
-    - !ruby/object:Pawn
-      color: :black
-      symbol: " ♟ "
-      moved: false
-      ep_move: 
-      crossed_piece: []
-      moves: 
-      last_move: []
-  - - "   "
-    - "   "
-    - "   "
-    - "   "
-    - "   "
-    - !ruby/object:Pawn
-      color: :white
-      symbol: " ♙ "
-      moved: true
-      ep_move:
-      - 2
-      - 5
-      crossed_piece:
-      - 3
-      - 5
-      moves:
-      - - 2
-        - 4
-      - - 2
-        - 5
-      - - 2
-        - 3
-      last_move:
-      - - 6
-        - 4
-      - - 4
-        - 4
-      - - 4
-        - 4
-      - - 3
-        - 4
-      - - 3
-        - 4
-      - - 2
-        - 5
-    - "   "
-    - "   "
-  - - !ruby/object:Pawn
-      color: :black
-      symbol: " ♟ "
-      moved: true
-      ep_move: 
-      crossed_piece: []
-      moves:
-      - - 2
-        - 0
-      - - 3
-        - 0
-      - - 2
-        - 1
-      last_move:
-      - - 1
-        - 0
-      - - 3
-        - 0
     - "   "
     - "   "
     - "   "
@@ -354,346 +257,126 @@ board: !ruby/object:Board
     - "   "
     - "   "
     - "   "
-  - - !ruby/object:Pawn
-      color: :white
-      symbol: " ♙ "
-      moved: true
-      ep_move: 
-      crossed_piece: []
-      moves:
-      - - 5
-        - 0
-      - - 4
-        - 0
-      - - 5
-        - 1
-      last_move:
-      - - 6
-        - 0
-      - - 5
-        - 0
+  - - "   "
     - "   "
-    - &1 !ruby/object:Pawn
-      color: :black
-      symbol: " ♟ "
-      moved: true
-      ep_move:
-      - 5
-      - 2
-      crossed_piece:
-      - 4
-      - 2
-      moves:
-      - - 5
-        - 3
-      - - 5
-        - 4
-      - - 5
-        - 2
-      last_move:
-      - - 1
-        - 3
-      - - 3
-        - 3
-      - - 3
-        - 3
-      - - 4
-        - 3
-      - - 4
-        - 3
-      - - 5
-        - 2
+    - "   "
     - "   "
     - "   "
     - "   "
     - "   "
     - "   "
   - - "   "
-    - !ruby/object:Pawn
-      color: :white
-      symbol: " ♙ "
-      moved: false
-      ep_move: 
-      crossed_piece: []
-      moves: 
-      last_move: []
     - "   "
-    - !ruby/object:Pawn
-      color: :white
-      symbol: " ♙ "
-      moved: false
-      ep_move: 
-      crossed_piece: []
-      moves: 
-      last_move: []
     - "   "
-    - !ruby/object:Pawn
-      color: :white
-      symbol: " ♙ "
-      moved: false
-      ep_move: 
-      crossed_piece: []
-      moves: 
-      last_move: []
-    - !ruby/object:Pawn
-      color: :white
-      symbol: " ♙ "
-      moved: false
-      ep_move: 
-      crossed_piece: []
-      moves: 
-      last_move: []
-    - !ruby/object:Pawn
-      color: :white
-      symbol: " ♙ "
-      moved: false
-      ep_move: 
-      crossed_piece: []
-      moves: 
-      last_move: []
-  - - !ruby/object:Rook
-      color: :white
-      symbol: "\e[0;37;49m ♖ \e[0m"
-      moved: false
-      last_move: []
-      moves:
-      - - 7
-        - 0
-      - - 7
-        - 0
-      - - 7
-        - 0
-      - - 7
-        - 0
-      - - 6
-        - 0
-      - - 7
-        - 1
-      - - 5
-        - 0
-      - - 7
-        - 2
-      - - 4
-        - 0
-      - - 7
-        - 3
-      - - 3
-        - 0
-      - - 7
-        - 4
-      - - 2
-        - 0
-      - - 7
-        - 5
-      - - 1
-        - 0
-      - - 7
-        - 6
-      - - 0
-        - 0
-      - - 7
-        - 7
-    - !ruby/object:Knight
-      color: :white
-      symbol: " ♘ "
-      moves:
-      - - 5
-        - 2
-      - - 5
-        - 0
-      - - 6
-        - 3
-    - !ruby/object:Bishop
-      color: :white
-      symbol: "\e[0;37;49m ♗ \e[0m"
-      moves:
-      - - 7
-        - 2
-      - - 7
-        - 2
-      - - 7
-        - 2
-      - - 7
-        - 2
-      - - 6
-        - 3
-      - - 6
-        - 1
-      - - 5
-        - 4
-      - - 5
-        - 0
-      - - 4
-        - 5
-      - - 3
-        - 6
-      - - 2
-        - 7
+    - "   "
+    - "   "
+    - "   "
+    - "   "
+    - "   "
+  - - "   "
+    - "   "
+    - "   "
+    - "   "
+    - "   "
+    - "   "
+    - "   "
+    - "   "
+  - - "   "
+    - "   "
+    - "   "
+    - "   "
+    - "   "
+    - "   "
+    - "   "
+    - "   "
+  - - "   "
+    - "   "
+    - "   "
     - !ruby/object:Queen
       color: :white
       symbol: "\e[0;37;49m ♕ \e[0m"
-      moves:
-      - - 7
-        - 3
-      - - 7
-        - 3
-      - - 7
-        - 3
-      - - 7
-        - 3
-      - - 7
-        - 3
-      - - 7
-        - 3
-      - - 7
-        - 3
-      - - 7
-        - 3
-      - - 6
-        - 3
-      - - 7
-        - 2
-      - - 7
-        - 4
-      - - 6
-        - 2
-      - - 6
-        - 4
-      - - 5
-        - 3
-      - - 7
-        - 1
-      - - 7
-        - 5
-      - - 5
-        - 1
-      - - 5
-        - 5
-      - - 4
-        - 3
-      - - 7
-        - 0
-      - - 7
-        - 6
-      - - 4
-        - 0
-      - - 4
-        - 6
-      - - 3
-        - 3
-      - - 7
-        - 7
-      - - 3
-        - 7
-      - - 2
-        - 3
-      - - 1
-        - 3
-      - - 0
-        - 3
     - !ruby/object:King
       color: :white
       symbol: " ♚ "
       last_move: []
       moved: false
-      moves:
-      - - 6
-        - 4
-      - - 7
-        - 5
-      - - 7
-        - 3
-      - - 6
-        - 5
-      - - 6
-        - 3
-    - !ruby/object:Bishop
-      color: :white
-      symbol: "\e[0;37;49m ♗ \e[0m"
-      moves:
-      - - 7
-        - 5
-      - - 7
-        - 5
-      - - 7
-        - 5
-      - - 7
-        - 5
-      - - 6
-        - 6
-      - - 6
-        - 4
-      - - 5
-        - 7
-      - - 5
-        - 3
-      - - 4
-        - 2
-      - - 3
-        - 1
-      - - 2
-        - 0
-    - !ruby/object:Knight
-      color: :white
-      symbol: " ♘ "
-      moves:
-      - - 5
-        - 7
-      - - 5
-        - 5
-      - - 6
-        - 4
-    - !ruby/object:Rook
-      color: :white
-      symbol: "\e[0;37;49m ♖ \e[0m"
-      moved: false
-      last_move: []
-      moves:
-      - - 7
-        - 7
-      - - 7
-        - 7
-      - - 7
-        - 7
-      - - 7
-        - 7
-      - - 6
-        - 7
-      - - 7
-        - 6
-      - - 5
-        - 7
-      - - 7
-        - 5
-      - - 4
-        - 7
-      - - 7
-        - 4
-      - - 3
-        - 7
-      - - 7
-        - 3
-      - - 2
-        - 7
-      - - 7
-        - 2
-      - - 1
-        - 7
-      - - 7
-        - 1
-      - - 0
-        - 7
-      - - 7
-        - 0
+    - "   "
+    - "   "
+    - "   "
   error: !ruby/object:Error {}
-  active_piece: *1
+  active_piece: !ruby/object:Queen
+    color: :black
+    symbol: "\e[0;30;49m ♛ \e[0m"
+    moves:
+    - - 6
+      - 3
+    - - 6
+      - 3
+    - - 6
+      - 3
+    - - 6
+      - 3
+    - - 6
+      - 3
+    - - 6
+      - 3
+    - - 6
+      - 3
+    - - 6
+      - 3
+    - - 7
+      - 3
+    - - 5
+      - 3
+    - - 6
+      - 2
+    - - 6
+      - 4
+    - - 7
+      - 4
+    - - 5
+      - 2
+    - - 5
+      - 4
+    - - 7
+      - 2
+    - - 4
+      - 3
+    - - 6
+      - 1
+    - - 6
+      - 5
+    - - 4
+      - 1
+    - - 4
+      - 5
+    - - 3
+      - 3
+    - - 6
+      - 0
+    - - 6
+      - 6
+    - - 3
+      - 0
+    - - 3
+      - 6
+    - - 2
+      - 3
+    - - 6
+      - 7
+    - - 2
+      - 7
+    - - 1
+      - 3
+    - - 0
+      - 3
 error: !ruby/object:Error {}
-current_player: *2
-from: d4
-to: c3
+current_player: *1
+from: d8
+to: d2
 current:
-- 5
-- 2
+- 6
+- 3
 safe_moves: 
 new_rook_pos: []
 castle_moves: 
