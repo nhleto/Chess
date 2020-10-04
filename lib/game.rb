@@ -21,8 +21,8 @@ class Game
   include HelperMethods
   include TitleDisplay
   def initialize
-    @player1 = Player.new(:name, :white)
-    @player2 = Player.new(:name, :black)
+    @player1 = Player.new('Henry', :white)
+    @player2 = Player.new('Sarah', :black)
     @board = Board.new
     @error = Error.new
     @current_player = nil
@@ -37,11 +37,10 @@ class Game
     @final = []
   end
 
-  # TODO: create set_players and intro_text
   def start_game
+    game_states
     # intro_text_one
     # set_players
-    game_states
     play_game
   end
 
@@ -85,6 +84,8 @@ class Game
   def valid_piece_move?(from, to, piece)
     piece.starting_moves(from, to)
     can_castle?
+
+    p piece
     case piece.class.name
     when 'Pawn'
       piece.en_passant(from, to, board.game_board)
@@ -132,8 +133,8 @@ class Game
       row.each_with_index do |_col, y|
         piece = board.game_board[x][y]
         from = x, y
-        unless piece != '   ' && piece.color == current_player.color
-        end
+        next unless piece != '   ' && piece.color == current_player.color
+        # end
 
         @final << final_mate?(from_1, piece_1, all_possible_moves)
         piece&.starting_moves(from, _to = nil)

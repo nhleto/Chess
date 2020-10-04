@@ -20,12 +20,12 @@ module SaveStates
     mode = gets.chomp.to_i until mode == 1 || mode == 2
     if Dir.empty?('savefiles')
       puts 'No saved games'
-      play_game
+      intro_text_one
     end
 
     if mode == 1
       puts 'Begin new game!'
-      play_game
+      intro_text_one
     else
       load_game
     end

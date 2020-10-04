@@ -26,11 +26,12 @@ module TitleDisplay
 
   def intro_text_one
     puts "\n Welcome players, to..."
-    sleep(1)
+    # sleep(1)
     puts title.cyan
-    sleep(2)
+    # sleep(2)
     puts rules
-    sleep(1)
+    # sleep(1)
+    set_players
   end
 
   def rules

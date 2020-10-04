@@ -13,7 +13,7 @@ class King < Piece
   end
 
   def piece
-    @color == :white ? " \u2655 " : " \u265a ".black
+    @color == :white ? " \u265a " : " \u265a ".black
   end
 
   def starting_moves(from, to)

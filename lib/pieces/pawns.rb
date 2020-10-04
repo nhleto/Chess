@@ -175,9 +175,10 @@ class Pawn < Piece
   end
 
   def toggle_ep(to, board)
-    if to == @ep_move
-      board[@crossed_piece[0]][@crossed_piece[1]] = '   '
-    end
+    # white / black ep move works on far right side of board. middle / left ep doesnt work : crossed piece == [] && ep_move == nil
+    return unless to == @ep_move
+
+    board[@crossed_piece[0]][@crossed_piece[1]] = '   '
   end
 
   def parse_last_moves(piece)
@@ -187,7 +188,7 @@ class Pawn < Piece
 
   def split_move_difference(piece, board)
     move = []
-    @crossed_piece = address(board, piece)
+    @crossed_piece = address(board, piece)  
     if piece.color == :black
       move << piece.last_move[1][0] - piece.last_move[0][0]
       move << piece.last_move[0][1]
