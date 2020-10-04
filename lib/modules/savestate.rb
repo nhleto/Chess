@@ -21,9 +21,7 @@ module SaveStates
     if Dir.empty?('savefiles')
       puts 'No saved games'
       intro_text_one
-    end
-
-    if mode == 1
+    elsif mode == 1
       puts 'Begin new game!'
       intro_text_one
     else

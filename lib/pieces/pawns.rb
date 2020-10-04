@@ -188,7 +188,7 @@ class Pawn < Piece
 
   def split_move_difference(piece, board)
     move = []
-    @crossed_piece = address(board, piece)  
+    @crossed_piece = address(board, piece)
     if piece.color == :black
       move << piece.last_move[1][0] - piece.last_move[0][0]
       move << piece.last_move[0][1]

@@ -39,8 +39,6 @@ class Game
 
   def start_game
     game_states
-    # intro_text_one
-    # set_players
     play_game
   end
 
