@@ -46,7 +46,7 @@ class Game
     loop do
       board.display_board
       check_if_checkmate?
-      parse_final
+      # parse_final
       check_if_pawn_checkmate?
       check? ? in_check(current_player) : false
       save_game
@@ -150,14 +150,14 @@ class Game
     !block_check?(piece1, from1, all_possible_moves) && !can_take_piece?(all_possible_moves, from1)
   end
 
-  def parse_final
-    if @final.all?(true) && !@final.empty?
-      final_reset
-      mate
-    else
-      final_reset
-    end
-  end
+  # def parse_final
+  #   if @final.all?(true) && !@final.empty?
+  #     final_reset
+  #     mate
+  #   else
+  #     final_reset
+  #   end
+  # end
 
   def final_reset
     @final = []
@@ -183,8 +183,8 @@ class Game
     @current = []
     @current << (x + direction_x)
     @current << (y + direction_y)
-    until current == to
 
+    until current == to || []
       return false if board.game_board[current[0]][current[1]] != '   '
 
       current[0] += direction_x

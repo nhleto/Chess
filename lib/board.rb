@@ -106,7 +106,7 @@ class Board
 
   def populate_array(board)
     8.times do |i|
-      # board[6][i] = Pawn.new(:white)
+      board[6][i] = Queen.new(:black)
       # board[1][i] = Pawn.new(:black)
     end
     # board[7][0] = Rook.new(:white)
@@ -124,7 +124,7 @@ class Board
     board[0][2] = Bishop.new(:black)
     board[0][5] = Bishop.new(:black)
 
-    board[7][3] = Queen.new(:white)
+    # board[7][3] = Queen.new(:white)
     board[7][4] = King.new(:white)
     board[0][3] = Queen.new(:black)
     board[0][4] = King.new(:black)
