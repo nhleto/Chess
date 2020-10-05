@@ -92,30 +92,17 @@ module Checkmate
     reject_moves = []
     safe_moves = []
     poss_moves.each do |move|
+      board.space_isnt_empty(move)
       if board.move_it(king_position, move) && check?
         reject_moves << move
-        board.to_nil(king_position1, move) unless space_isnt_empty(move)
       elsif board.move_it(king_position, move) && !check?
         safe_moves << move
-        board.to_nil(king_position, move)
       end
-      board.to_nil(king_position1, move)
+      board.to_nil(king_position, move)
     end
     # puts "safe moves are #{safe_moves}".green
     # puts "shit moves are #{reject_moves}".yellow
     board.make_move(king_position, king_position1)
-    safe_moves?(safe_moves)
-  end
-
-  def space_isnt_empty(move)
-    piece = board.game_board[move[0]][move[1]]
-    if piece != '   '
-      puts piece
-    end
-  end
-
-  def safe_moves?(safe_moves)
-    safe_moves.length.zero? ? @safe_moves = 0 : false
   end
 
   def legal_possible_move(king_position, king, possible_moves)

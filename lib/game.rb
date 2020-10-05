@@ -14,7 +14,7 @@ require 'pry'
 class Game
   Player = Struct.new(:name, :color)
   attr_reader :board, :player1, :player2, :current_player, :answer, :black_rook_pos,
-              :from, :to, :error, :safe_moves, :new_rook_pos, :castle_moves, :current, :final
+              :from, :to, :error, :new_rook_pos, :castle_moves, :current, :final
   include SaveStates
   include Checkmate
   include Vector
@@ -30,7 +30,6 @@ class Game
     @to = nil
     @current = current
     @current_player = player1
-    @safe_moves = nil
     @new_rook_pos = []
     @castle_moves = nil
     @black_rook_pos = []
@@ -46,7 +45,7 @@ class Game
     loop do
       board.display_board
       check_if_checkmate?
-      # parse_final
+      parse_final
       check_if_pawn_checkmate?
       check? ? in_check(current_player) : false
       save_game
@@ -69,8 +68,9 @@ class Game
   def vet_piece_move?(from, to)
     piece = board.get_active_piece(from)
     validate_turn(from, piece)
-    # valid_piece_move?(from, to, piece) ? board.make_move(from, to) : valid_move_false(from, to)
-    board.make_move(from, to)
+    board.space_isnt_empty(to)
+    valid_piece_move?(from, to, piece) ? board.make_move(from, to) : valid_move_false(from, to)
+    # board.make_move(from, to)
     puts_king_in_check?(from, to)
     still_in_check(from, to)
     promote_pawn?(to, piece)
@@ -130,7 +130,6 @@ class Game
         piece = board.game_board[x][y]
         from = x, y
         next unless piece != '   ' && piece.color == current_player.color
-        # end
 
         @final << final_mate?(from_1, piece_1, all_possible_moves)
         piece&.starting_moves(from, _to = nil)
@@ -150,14 +149,14 @@ class Game
     !block_check?(piece1, from1, all_possible_moves) && !can_take_piece?(all_possible_moves, from1)
   end
 
-  # def parse_final
-  #   if @final.all?(true) && !@final.empty?
-  #     final_reset
-  #     mate
-  #   else
-  #     final_reset
-  #   end
-  # end
+  def parse_final
+    if @final.all?(true) && !@final.empty?
+      final_reset
+      mate
+    else
+      final_reset
+    end
+  end
 
   def final_reset
     @final = []
@@ -169,6 +168,7 @@ class Game
       legal_king_moves(from, to)
       error.bad_check_move(current_player)
       board.make_move(to, from)
+      board.respawn_pieces
       play_game
     else
       true
@@ -337,6 +337,7 @@ class Game
   def in_check(current_player)
     error.check_error(current_player)
     legal_king_moves(king_position, to)
+    board.respawn_pieces
   end
 
   def check?
