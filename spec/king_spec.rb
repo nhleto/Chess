@@ -8,7 +8,7 @@ describe King do
   describe '#init' do
     context 'when kings spawn' do
       it 'has unique symbol' do
-        expect(white_king.symbol).to be(" \u2655 ")
+        expect(white_king.symbol).to eq(" \u265a ")
         expect(black_king.symbol).to eq(" \u265a ".black)
       end
     end

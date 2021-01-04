@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require './lib/game.rb'
-require './lib/board.rb'
+require '../lib/game.rb'
+require '../lib/board.rb'
 # include 'colorize'
 
 describe Game do
@@ -28,7 +28,7 @@ describe Game do
         from = [7, 0]
         to = [5, 0]
         piece = Pawn.new(:white)
-        expect(game.check_if_piece_in_way?(from, to, piece)).to be(false)
+        expect(game.check_if_piece_in_way?(from, to, piece)).to be(true)
       end
     end
     context 'when the way is clear' do
