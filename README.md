@@ -14,7 +14,7 @@ The game ends when the enemy king is captured or checkmate is called.
 Because the rules have not changed much in the last 1,500 years,
 please refer to the link if you are confused / have questions.
 </p>
-![alt text](https://github.com/nhleto/Chess/blob/master/images/Screenshot%20(15).png)
+![alt text](https://github.com/nhleto/Chess/blob/master/images/Screenshot%20(15).png?raw=true)
 
 
 [Play on REPL.it](https://repl.it/@nhleto/Chess-1#lib/board.rb)
