@@ -184,7 +184,7 @@ class Game
     @current << (x + direction_x)
     @current << (y + direction_y)
 
-    until current == to || []
+    until current == to
       return false if board.game_board[current[0]][current[1]] != '   '
 
       current[0] += direction_x
@@ -192,7 +192,7 @@ class Game
     end
     legal_capture?(current, to, piece)
 
-    true
+    # true
   end
 
   def legal_capture?(current, to, piece)
@@ -406,5 +406,5 @@ class Game
   end
 end
 
-# chess = Game.new
-# chess.start_game
+chess = Game.new
+chess.start_game

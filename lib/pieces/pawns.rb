@@ -1,12 +1,13 @@
 # frozen_string_literal: true
 
 require 'colorize'
-require_relative './piece.rb'
+require_relative './piece'
 require_relative '../modules/helpermethods'
 
 # pawn clas
 class Pawn < Piece
   attr_reader :symbol, :color, :moved, :ep_move, :crossed_piece
+
   def initialize(color)
     @color = color
     @symbol = piece
@@ -43,9 +44,10 @@ class Pawn < Piece
       moves << [x + 1, y + 1]
       moves << [x + 1, y - 1]
     end
-    check_if_moved(to)
-    check_if_double_step(from, to)
     on_board_moves
+    check_if_moved(from)
+    binding.pry
+    check_if_double_step(from, to)
   end
 
   def check_if_double_step(from, to)
@@ -71,8 +73,8 @@ class Pawn < Piece
     moves.uniq!
   end
 
-  def check_if_moved(to)
-    x, y = to
+  def check_if_moved(from)
+    x, y = from
     if @color == :white && x != 6
       @moved = true
     elsif @color == :black && x != 1
@@ -151,20 +153,20 @@ class Pawn < Piece
   def parse_side_piece_right?(to, board)
     i, j = to
     piece = board[i][j + 1]
-    board[i][j + 1] != '   ' && piece.color != color && piece.class.name == 'Pawn' ? true : false
+    board[i][j + 1] != '   ' && piece.color != color && piece.instance_of?(Pawn) ? true : false
   end
 
   def parse_side_piece_left?(to, board)
     i, j = to
     piece = board[i][j - 1]
-    board[i][j - 1] != '   ' && piece.color != color && piece.class.name == 'Pawn' ? true : false
+    board[i][j - 1] != '   ' && piece.color != color && piece.instance_of?(Pawn) ? true : false
   end
 
   def push_ep_moves(to, board)
     i, j = to
     offset = @color == :white ? 1 : -1
     piece = board[i][j + offset]
-    if board[i][j + offset] != '   ' && piece.color != color && piece.class.name == 'Pawn' && parse_last_moves(piece) == 2
+    if board[i][j + offset] != '   ' && piece.color != color && piece.instance_of?(Pawn) && parse_last_moves(piece) == 2
       if piece.color == :black
         move = split_move_difference(piece, board)
       elsif piece.color == :white
